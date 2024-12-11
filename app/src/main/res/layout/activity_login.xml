@@ -1,0 +1,75 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#6772B1"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:shadowColor="#000000"
+        android:shadowDy="4"
+        android:background="@drawable/rounded_transparent_background"
+        android:shadowRadius="4"
+        android:text="Welcome to RecipeBook!"
+        android:textColor="#FFFFFF"
+        android:textSize="50sp"
+        android:textStyle="bold" />
+
+    <!-- שדה אימייל -->
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:textColorHint="#E6FFFFFF"
+        android:inputType="textEmailAddress"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#FFFFFF" />
+
+    <!-- שדה סיסמה -->
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:textColorHint="#E6FFFFFF"
+        android:inputType="textPassword"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#FFFFFF" />
+
+    <!-- כפתור Login -->
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/button_background"
+        android:text="Login"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+    <!-- כפתור Sign Up -->
+    <Button
+        android:id="@+id/signUpButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/button_background"
+        android:text="Sign Up"
+        android:elevation="6dp"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+
+
+</LinearLayout>
