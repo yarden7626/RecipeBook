@@ -2,8 +2,7 @@ package com.example.recipebook;
 
 import java.util.List;
 
-public class Recipe
-{
+public class Recipe {
     private int recipeId; //המספר זיהוי של המתכון
     private String recipeName; //שם המתכון
     private String category; //קטגוריה של המתכון
@@ -29,7 +28,6 @@ public class Recipe
     public Recipe() {}
 
     // פעולות מאחזרות ומשנות לכל תכונה
-
     public int getRecipeId() {
         return recipeId;
     }
@@ -86,7 +84,6 @@ public class Recipe
         this.isFavorite = isFavorite;
     }
 
-    // Getter ו-Setter לרשימת רכיבים
     public List<Ingredient> getIngredients() {
         return ingredients;
     }
