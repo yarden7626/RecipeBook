@@ -5,4 +5,5 @@
     <string name="filter_recipes" />
     <string name="my_recipes" />
     <string name="what_are_you_making_today">What Are You Making Today?</string>
+    <string name="add_new_recipe" />
 </resources>
