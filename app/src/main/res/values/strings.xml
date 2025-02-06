@@ -6,4 +6,15 @@
     <string name="my_recipes" />
     <string name="what_are_you_making_today">What Are You Making Today?</string>
     <string name="add_new_recipe" />
+
+    <string-array name="recipe_categories">
+        <item>Pasta</item>
+        <item>Salads</item>
+        <item>Desserts</item>
+        <item>Soups</item>
+        <item>Drinks</item>
+        <item>Meat</item>
+        <item>Pastries</item>
+        <item>Fish</item>
+    </string-array>
 </resources>
