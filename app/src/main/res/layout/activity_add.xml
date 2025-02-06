@@ -65,9 +65,8 @@
             android:id="@+id/directions"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:contentDescription="TODO"
-            android:hint="Enter Directions"
             android:gravity="top"
+            android:hint="@string/enter_directions"
             tools:ignore="ContentDescription,VisualLintTextFieldSize" />
     </LinearLayout>
 
@@ -102,7 +101,6 @@
         android:text="Choose Category"
         android:layout_marginTop="8dp"
         android:textSize="17sp"
-
         android:layout_marginStart="16dp"
         android:background="@drawable/button_background"
         app:layout_constraintTop_toBottomOf="@id/formContainer"
@@ -137,13 +135,13 @@
     <!-- כפתור טיימר -->
     <ImageButton
         android:id="@+id/timerButton"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginTop="8dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="Set Timer"
         android:scaleType="fitCenter"
-        android:src="@android:drawable/ic_menu_recent_history"
+        android:src="@drawable/timer_icon"
         app:layout_constraintStart_toEndOf="@id/AddTimer"
         app:layout_constraintEnd_toStartOf="@id/AddPhotoBtn"
         app:layout_constraintTop_toBottomOf="@id/categorySpinner"
@@ -168,18 +166,18 @@
 
     <ImageButton
         android:id="@+id/backButton"
-        android:src="@android:drawable/ic_menu_revert"
         android:layout_width="80sp"
         android:layout_height="60sp"
         android:layout_margin="16dp"
         android:layout_marginStart="16dp"
         android:background="@drawable/button_background"
+        android:scaleType="fitCenter"
+        android:src="@android:drawable/ic_menu_revert"
         android:text="@string/back"
         android:textSize="18sp"
-        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/AddPhotoBtn"
         app:layout_constraintVertical_bias="0.945"
-        tools:ignore="VisualLintButtonSize" />
+        tools:ignore="VisualLintButtonSize,SpeakableTextPresentCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>
