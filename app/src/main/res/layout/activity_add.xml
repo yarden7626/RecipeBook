@@ -129,7 +129,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="27dp"
-        android:textSize="18sp"
+        android:textSize="17sp"
         android:background="@drawable/button_background"
         android:text="Choose Time"
         app:layout_constraintStart_toStartOf="parent"
