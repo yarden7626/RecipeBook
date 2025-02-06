@@ -8,6 +8,7 @@
     tools:context="AddActivity">
 
 
+
     <TextView
         android:id="@+id/AddTitle"
         android:layout_width="wrap_content"
@@ -160,6 +161,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:textSize="18sp"
+        android:textStyle="bold"
+
         app:layout_constraintTop_toBottomOf="@id/AddPhotoBtn"
         app:layout_constraintVertical_bias="0.945"
         tools:ignore="VisualLintButtonSize" />
@@ -182,4 +185,6 @@
         app:layout_constraintTop_toBottomOf="@id/AddPhotoBtn"
         app:layout_constraintVertical_bias="0.945"
         tools:ignore="VisualLintButtonSize,SpeakableTextPresentCheck" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
