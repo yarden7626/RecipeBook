@@ -101,6 +101,8 @@
         android:layout_height="wrap_content"
         android:text="Choose Category"
         android:layout_marginTop="8dp"
+        android:textSize="17sp"
+
         android:layout_marginStart="16dp"
         android:background="@drawable/button_background"
         app:layout_constraintTop_toBottomOf="@id/formContainer"
@@ -127,6 +129,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="27dp"
+        android:textSize="18sp"
         android:background="@drawable/button_background"
         android:text="Choose Time"
         app:layout_constraintStart_toStartOf="parent"
@@ -162,15 +165,18 @@
         tools:ignore="VisualLintButtonSize" />
 
     <!-- כפתור חזרה -->
-    <Button
+
+    <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="109dp"
-        android:layout_height="48dp"
+        android:src="@android:drawable/ic_menu_revert"
+        android:layout_width="80sp"
+        android:layout_height="60sp"
         android:layout_margin="16dp"
         android:layout_marginStart="16dp"
         android:background="@drawable/button_background"
         android:text="@string/back"
         android:textSize="18sp"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/AddPhotoBtn"
