@@ -54,13 +54,12 @@
         android:id="@+id/addRecipeBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/plusImage"
+        android:src="@drawable/plus_icon"
         android:contentDescription="Add Recipe"
         android:layout_margin="16dp"
+        android:background="@drawable/button_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:backgroundTint="@color/primaryColor"
-        android:tint="@android:color/white"
         app:maxImageSize="40dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -73,7 +72,7 @@
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:backgroundTint="@color/primaryColor"
+        android:background="@drawable/button_background"
         android:tint="@android:color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
