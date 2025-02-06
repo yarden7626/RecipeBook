@@ -13,18 +13,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add New Recipe"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
+        android:textColor="#FFFFFF"
+        android:textSize="45sp"
+        android:textStyle="bold"
         android:gravity="center"
         android:shadowColor="#000000"
         android:shadowDx="2"
         android:shadowDy="4"
         android:shadowRadius="4"
-        android:textColor="#FFFFFF"
-        android:textSize="45sp"
-        android:textStyle="bold" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
         android:id="@+id/formContainer"
@@ -42,7 +42,6 @@
             android:layout_height="wrap_content"
             android:hint="Enter Recipe Name" />
 
-
         <EditText
             android:id="@+id/preparationTime"
             android:layout_width="match_parent"
@@ -52,7 +51,8 @@
         <EditText
             android:id="@+id/ingredients"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
+            android:gravity="top"
             android:hint="Enter Ingredients" />
 
         <EditText
@@ -60,21 +60,31 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:hint="Enter Directions"
-            android:minLines="5"
-            android:gravity="top"
-            android:inputType="textMultiLine" />
+            android:gravity="top" />
     </LinearLayout>
 
-    <Button
+    <ImageView
         android:id="@+id/addImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
+        android:src="@android:drawable/gallery_thumb"
+        app:layout_constraintTop_toBottomOf="@id/formContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="28dp"  />
+
+    <Button
+        android:id="@+id/AddPhotoBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Image"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button_background"
+        android:text="Upload Photo"
+        app:layout_constraintTop_toBottomOf="@id/addImage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/formContainer"
-        android:layout_margin="16dp" />
+        android:layout_marginStart="16dp" />
 
-
+    <!-- Save button -->
     <Button
         android:id="@+id/saveButton"
         android:layout_width="0dp"
@@ -82,20 +92,21 @@
         android:layout_margin="16dp"
         android:background="@drawable/button_background"
         android:text="Save"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/AddPhotoBtn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addImage" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Back button -->
     <Button
         android:id="@+id/backButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Back"
+        android:layout_margin="16dp"
         android:background="@drawable/button_background"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/saveButton"
-        android:layout_margin="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/saveButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

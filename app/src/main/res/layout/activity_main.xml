@@ -48,10 +48,10 @@
         app:layout_constraintTop_toBottomOf="@id/filterButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/addRecipe" />
+        app:layout_constraintBottom_toTopOf="@id/addRecipeBtn" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addRecipe"
+        android:id="@+id/addRecipeBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/plusImage"
@@ -75,4 +75,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:backgroundTint="@color/primaryColor"
         android:tint="@android:color/white" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
