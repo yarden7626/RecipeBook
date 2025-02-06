@@ -40,27 +40,34 @@
             android:id="@+id/recipeName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Recipe Name" />
+            android:hint="Enter Recipe Name"
+            android:minHeight="48dp"
+            tools:ignore="VisualLintTextFieldSize" />
 
         <EditText
             android:id="@+id/preparationTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Preparation Time" />
+            android:hint="Enter Preparation Time"
+            android:minHeight="48dp"
+            tools:ignore="VisualLintTextFieldSize" />
 
         <EditText
             android:id="@+id/ingredients"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:gravity="top"
-            android:hint="Enter Ingredients" />
+            android:hint="Enter Ingredients"
+            tools:ignore="VisualLintTextFieldSize" />
 
         <EditText
             android:id="@+id/directions"
             android:layout_width="match_parent"
             android:layout_height="150dp"
+            android:contentDescription="TODO"
             android:hint="Enter Directions"
-            android:gravity="top" />
+            android:gravity="top"
+            tools:ignore="ContentDescription,VisualLintTextFieldSize" />
     </LinearLayout>
 
     <ImageView
@@ -70,8 +77,8 @@
         android:layout_marginTop="16dp"
         android:src="@android:drawable/gallery_thumb"
         app:layout_constraintTop_toBottomOf="@id/formContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="28dp"  />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="28dp"  />
 
     <Button
         android:id="@+id/AddPhotoBtn"
@@ -81,32 +88,58 @@
         android:background="@drawable/button_background"
         android:text="Upload Photo"
         app:layout_constraintTop_toBottomOf="@id/addImage"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="16dp" />
 
-    <!-- Save button -->
+    <Button
+        android:id="@+id/categoryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Category"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_background"
+        app:layout_constraintTop_toBottomOf="@id/categorySpinner"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp"
+        android:minHeight="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/formContainer" />
+
     <Button
         android:id="@+id/saveButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:background="@drawable/button_background"
         android:text="Save"
-        app:layout_constraintTop_toBottomOf="@id/AddPhotoBtn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Back button -->
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="109dp"
+        android:layout_height="48dp"
         android:layout_margin="16dp"
         android:background="@drawable/button_background"
-        android:text="Back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/AddPhotoBtn"
+        app:layout_constraintVertical_bias="0.945"
+        tools:ignore="VisualLintButtonSize" /> />
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="109dp"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/button_background"
+        android:text="@string/back"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/saveButton" />
+        app:layout_constraintTop_toBottomOf="@id/AddPhotoBtn"
+        app:layout_constraintVertical_bias="0.945"
+        tools:ignore="VisualLintButtonSize" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
