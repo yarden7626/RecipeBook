@@ -55,7 +55,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         public RecipeViewHolder(View itemView) {
             super(itemView);
             // מחברים כל view עם ה-id ב-xml
-            recipeName = itemView.findViewById(R.id.recipeName);
+            recipeName = itemView.findViewById(R.id.editRecipeName);
             favoriteIcon = itemView.findViewById(R.id.favoriteIcon);
         }
     }
