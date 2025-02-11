@@ -128,20 +128,29 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="140dp"
-            >
+            android:gravity="center_vertical">
 
+            <!-- Plate Icon -->
             <ImageView
                 android:id="@+id/imageRecipe"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="10sp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
                 android:src="@drawable/plateIcon" />
 
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <!-- Timer Button  -->
             <ImageButton
                 android:id="@+id/timerButton"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginTop="20sp"
                 android:background="@android:color/transparent"
                 android:contentDescription="Timer Button"
