@@ -6,7 +6,7 @@
     android:background="@color/backgroundColor"
     tools:context="AddActivity">
 
-
+    <!-- Title of the Recipe -->
     <TextView
         android:id="@+id/RecipeTitle"
         android:layout_width="wrap_content"
@@ -25,6 +25,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Form Container -->
     <LinearLayout
         android:id="@+id/formContainer"
         android:layout_width="0dp"
@@ -35,34 +36,72 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/RecipeTitle">
 
-
-        <TextView
-            android:id="@+id/pTimeRecipe"
+        <!-- Preparation Time -->
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20sp"
-            android:text="Preparation Time" />
+            android:layout_height="40dp"
+            android:layout_marginBottom="20sp">
+            <TextView
+                android:id="@+id/pTimeRecipe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Preparation Time:"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginEnd="8dp" />
+            <TextView
+                android:id="@+id/pTimeValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/ingrRecipe"
+        <!-- Ingredients -->
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:layout_marginBottom="20sp"
+            android:layout_marginBottom="20sp">
+            <TextView
+                android:id="@+id/ingrRecipe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ingredients:"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginEnd="8dp" />
+            <TextView
+                android:id="@+id/ingrValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="" />
+        </LinearLayout>
 
-            android:text="ingredients" />
-
-        <TextView
-            android:id="@+id/direRecipe"
+        <!-- Directions -->
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:text="directions" />
+            android:layout_height="170">
+            <TextView
+                android:id="@+id/direRecipe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Directions:"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginEnd="8dp" />
+            <TextView
+                android:id="@+id/direValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="" />
+        </LinearLayout>
+
     </LinearLayout>
-
-
-
-
-
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,9 +115,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="MissingConstraints">
 
-        <!-- כפתור חזרה -->
-
-
+        <!-- Back Button -->
         <ImageButton
             android:id="@+id/backButton"
             android:layout_width="80sp"
@@ -92,14 +129,13 @@
             app:layout_constraintVertical_bias="0.945"
             tools:ignore="VisualLintButtonSize,SpeakableTextPresentCheck" />
 
-
+        <!-- Favorite -->
         <ImageView
             android:id="@+id/isFavRecipe"
             android:layout_width="60dp"
             android:layout_height="48dp"
             android:layout_margin="16dp"
             android:src="@drawable/ic_star_empty" />
-
 
     </LinearLayout>
 
