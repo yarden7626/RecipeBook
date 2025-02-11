@@ -27,6 +27,21 @@
         android:textSize="45sp"
         android:textStyle="bold" />
 
+    <ImageButton
+        android:id="@+id/backButtonList"
+        android:layout_width="80sp"
+        android:layout_height="60sp"
+        android:background="@drawable/button_background"
+        android:scaleType="fitCenter"
+        android:src="@android:drawable/ic_menu_revert"
+        android:text="@string/back"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="18sp"
+        app:layout_constraintVertical_bias="0.945"
+        tools:ignore="MissingConstraints,SpeakableTextPresentCheck,VisualLintButtonSize" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/filterButton"
         android:layout_width="wrap_content"
@@ -64,17 +79,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="40dp" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/MyRecipes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/myRecipesImage"
-        android:contentDescription="My Recipes"
-        app:maxImageSize="70sp"
-        android:layout_margin="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/button_background"
-        android:tint="@android:color/white" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
