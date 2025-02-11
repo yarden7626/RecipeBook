@@ -1,5 +1,4 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,34 +7,33 @@
     tools:context="AddActivity">
 
 
-
     <TextView
         android:id="@+id/AddTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add New Recipe"
         android:layout_marginTop="16dp"
-        android:textColor="#FFFFFF"
-        android:textSize="45sp"
-        android:textStyle="bold"
         android:gravity="center"
         android:shadowColor="#000000"
         android:shadowDx="2"
         android:shadowDy="4"
         android:shadowRadius="4"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="Add New Recipe"
+        android:textColor="#FFFFFF"
+        android:textSize="45sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- טופס למילוי פרטי המתכון -->
     <LinearLayout
         android:id="@+id/formContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_margin="16dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/AddTitle">
 
         <EditText
@@ -52,9 +50,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Enter Preparation Time"
+            android:inputType="time"
             android:minHeight="48dp"
-            tools:ignore="VisualLintTextFieldSize"
-            android:inputType="time" />
+            tools:ignore="VisualLintTextFieldSize" />
 
         <EditText
             android:id="@+id/editIngredients"
@@ -90,24 +88,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/button_background"
         android:text="Upload Photo"
-        app:layout_constraintTop_toBottomOf="@id/addImage"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="16dp" />
+        app:layout_constraintTop_toBottomOf="@id/addImage" />
 
     <!-- כפתור בחירת קטגוריה -->
     <Button
         android:id="@+id/categoryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Category"
-        android:layout_marginTop="8dp"
-        android:textSize="17sp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/button_background"
-        app:layout_constraintTop_toBottomOf="@id/formContainer"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:text="Choose Category"
+        android:textSize="17sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/formContainer" />
 
     <!-- Spinner להצגת קטגוריות -->
     <Spinner
@@ -115,12 +113,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:layout_constraintStart_toEndOf="@id/categoryButton"
-        app:layout_constraintEnd_toStartOf="@id/addImage"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/formContainer"
         android:minHeight="48dp"
-         />
+        app:layout_constraintEnd_toStartOf="@id/addImage"
+        app:layout_constraintStart_toEndOf="@id/categoryButton"
+        app:layout_constraintTop_toBottomOf="@id/formContainer" />
 
     <!-- כפתור הוספת טיימר -->
 
@@ -130,9 +127,9 @@
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="27dp"
-        android:textSize="17sp"
         android:background="@drawable/button_background"
         android:text="Choose Time"
+        android:textSize="17sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/categoryButton" />
     <!-- כפתור טיימר -->
@@ -145,46 +142,53 @@
         android:contentDescription="Set Timer"
         android:scaleType="fitCenter"
         android:src="@drawable/timer_icon"
-        app:layout_constraintStart_toEndOf="@id/AddTimer"
         app:layout_constraintEnd_toStartOf="@id/AddPhotoBtn"
-        app:layout_constraintTop_toBottomOf="@id/categorySpinner"
-        />
+        app:layout_constraintStart_toEndOf="@id/AddTimer"
+        app:layout_constraintTop_toBottomOf="@id/categorySpinner" />
 
-    <!-- כפתור שמירה -->
-    <Button
-        android:id="@+id/saveButton"
-        android:text="Save"
-        android:layout_width="109dp"
-        android:layout_height="48dp"
-        android:layout_margin="16dp"
-        android:background="@drawable/button_background"
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:background="#99D3D7ED"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        tools:ignore="MissingConstraints">
 
-        app:layout_constraintTop_toBottomOf="@id/AddPhotoBtn"
-        app:layout_constraintVertical_bias="0.945"
-        tools:ignore="VisualLintButtonSize" />
+        <!-- כפתור חזרה -->
 
-    <!-- כפתור חזרה -->
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="80sp"
+            android:layout_height="60sp"
+            android:background="@drawable/button_background"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_menu_revert"
+            android:text="@string/back"
+            android:layout_marginEnd="120dp"
+            android:textSize="18sp"
+            app:layout_constraintVertical_bias="0.945"
+            tools:ignore="VisualLintButtonSize,SpeakableTextPresentCheck" />
 
-    <ImageButton
-        android:id="@+id/backButton"
-        android:layout_width="80sp"
-        android:layout_height="60sp"
-        android:layout_margin="16dp"
-        android:layout_marginStart="16dp"
-        android:background="@drawable/button_background"
-        android:scaleType="fitCenter"
-        android:src="@android:drawable/ic_menu_revert"
-        android:text="@string/back"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/AddPhotoBtn"
-        app:layout_constraintVertical_bias="0.945"
-        tools:ignore="VisualLintButtonSize,SpeakableTextPresentCheck" />
+        <!-- כפתור שמירה -->
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="109dp"
+            android:layout_height="48dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/button_background"
+            android:text="Save"
+            android:layout_marginStart="120dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintVertical_bias="0.945"
+            tools:ignore="VisualLintButtonSize" />
 
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
