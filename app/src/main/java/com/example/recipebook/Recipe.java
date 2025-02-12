@@ -1,5 +1,7 @@
 package com.example.recipebook;
 
+import android.content.Context;
+
 import java.util.List;
 
 public class Recipe {
@@ -26,6 +28,10 @@ public class Recipe {
 
     //  פעולה בונה היוצרת מתכון ריק
     public Recipe() {}
+
+    public Recipe(String recipeName) {
+        this.recipeName = recipeName;
+    }
 
     // פעולות מאחזרות ומשנות לכל תכונה
     public int getRecipeId() {
