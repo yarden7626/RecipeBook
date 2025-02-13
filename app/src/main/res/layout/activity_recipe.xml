@@ -137,7 +137,7 @@
                 android:layout_height="120dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="2dp"
-                android:src="@drawable/plateIcon" />
+                android:src="@drawable/plate_icon" />
 
 
             <View
