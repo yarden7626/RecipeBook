@@ -49,18 +49,20 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="Filter Recipes"
-        android:src="@drawable/filterImage"
+        android:src="@drawable/filter_icon"
         android:tint="@color/primaryColor"
         app:backgroundTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"
-        app:maxImageSize="40dp" />
+        app:maxImageSize="50dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_recipes"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="20dp"
+        android:layout_margin="16dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/filterButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
