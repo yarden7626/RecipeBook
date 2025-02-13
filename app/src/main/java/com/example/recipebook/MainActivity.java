@@ -35,21 +35,16 @@ public class MainActivity extends AppCompatActivity {
 
        Button addRecipeBtn = findViewById(R.id.addRecipeBtn);
        //פונקציה שפועלת כאשר לוחצים על כפתור הפלוס ומעבירה למסך הוספת מתכון חדש
-       addRecipeBtn.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               Intent intent = new Intent(MainActivity.this , AddActivity.class);
-               startActivity(intent);//עובר למסך הוספת מתכון
-           }
+       addRecipeBtn.setOnClickListener(v -> {
+           Intent intent = new Intent(MainActivity.this , AddActivity.class);
+           startActivity(intent);//עובר למסך הוספת מתכון
        });
 
         ImageButton backBtnList = findViewById(R.id.backButtonList);
-        backBtnList.setOnClickListener(new View.OnClickListener() { //פונקציית חזרה למסך הראשי של ההתחברות והרשמה, פועלת כאשר לוחצים על כפתור חזור
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent); //עובר למסך הכניסה
-            }
+        //פונקציית חזרה למסך הראשי של ההתחברות והרשמה, פועלת כאשר לוחצים על כפתור חזור
+        backBtnList.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent); //עובר למסך הכניסה
         });
     }
 }
