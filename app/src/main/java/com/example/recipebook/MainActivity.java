@@ -21,10 +21,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ArrayList<Recipe> recipeList = new ArrayList<>();
-        for (int i=0; i<5; i++)
-        {
-            recipeList.add(new Recipe(String.valueOf(i)));
-        }
+
 
         // אתחול של ה-RecyclerView
       RecyclerView recyclerView = findViewById(R.id.rv_recipes);
