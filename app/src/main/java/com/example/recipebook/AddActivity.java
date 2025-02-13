@@ -1,10 +1,16 @@
 package com.example.recipebook;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 
 public class AddActivity extends AppCompatActivity {
@@ -47,5 +53,26 @@ public class AddActivity extends AppCompatActivity {
                 categorySpinner.setVisibility(View.VISIBLE); // הצגת ה-Spinner
             }
         });
+
+        ImageButton backBtnAdd = findViewById(R.id.backButtonAdd);
+        //פונקציה שפותחת דיאלוג כאשר המשתמש לוחץ על כפתור חזור
+        backBtnAdd.setOnClickListener( v -> {
+            AlertDialog dialog = new AlertDialog.Builder(AddActivity.this)
+                    .setMessage("Are you sure you wanna to out? Your data will not be saved")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        //אם המשתמש בחר שכן , הוא יעבור למסך של רשימת המתכונים והמסך הנוכחי ייסגר והנתונים שערך לא יישמרו
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Cancel", null) //אם המשתמש בחר לבטל נשארים במסך הנוכחי
+                    .create();
+                     dialog.show();
+        });
+
     }
 }
