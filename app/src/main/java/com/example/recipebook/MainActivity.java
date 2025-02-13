@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
            @Override
            public void onClick(View v) {
                Intent intent = new Intent(MainActivity.this , AddActivity.class);
-               startActivity(intent);
+               startActivity(intent);//עובר למסך הוספת מתכון
            }
        });
 
