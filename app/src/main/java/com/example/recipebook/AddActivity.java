@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,15 +36,15 @@ public class AddActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         int savedPosition = prefs.getInt(CATEGORY_KEY, -1);
 
-        // טוענים את הבחירה הקודמת אחרי שהאדפטר נטען
+        // טוענים את הבחירה הקודמת **אחרי שהאדפטר מחובר לספינר**
         if (savedPosition != -1) {
-            categorySpinner.setSelection(savedPosition, false);
+            categorySpinner.post(() -> categorySpinner.setSelection(savedPosition, false));
         }
 
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View view, int position, long id) {
-                // שמירת הבחירה ב-SharedPreferences
+                // שמירת הבחירה
                 SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
                 editor.putInt(CATEGORY_KEY, position);
                 editor.apply();
@@ -57,24 +56,18 @@ public class AddActivity extends AppCompatActivity {
             }
         });
 
-        // כפתור הבחירה – מציג את הספינר בעת לחיצה
-        categoryButton.setOnClickListener(v -> {
-            categorySpinner.performClick(); //פותח את הספינר
-        });
+        // כפתור הבחירה – פותח את הספינר במקום להסתיר אותו
+        categoryButton.setOnClickListener(v -> categorySpinner.performClick());
 
         ImageButton backBtnAdd = findViewById(R.id.backButtonAdd);
-        // פונקציה שפותחת דיאלוג כאשר המשתמש לוחץ על כפתור חזור
         backBtnAdd.setOnClickListener(v -> {
             AlertDialog dialog = new AlertDialog.Builder(AddActivity.this)
                     .setMessage("Are you sure you want to exit? Your data will not be saved")
                     .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
+                    .setPositiveButton("Yes", (dialog1, which) -> {
+                        Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
                     })
                     .setNegativeButton("Cancel", null)
                     .create();
