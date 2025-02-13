@@ -33,6 +33,16 @@ public class MainActivity extends AppCompatActivity {
         // קישור ה-Adapter ל-RecyclerView
         recyclerView.setAdapter(recipeAdapter);
 
+       Button addRecipeBtn = findViewById(R.id.addRecipeBtn);
+       //פונקציה שפועלת כאשר לוחצים על כפתור הפלוס ומעבירה למסך הוספת מתכון חדש
+       addRecipeBtn.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Intent intent = new Intent(MainActivity.this , AddActivity.class);
+               startActivity(intent);
+           }
+       });
+
         ImageButton backBtnList = findViewById(R.id.backButtonList);
         backBtnList.setOnClickListener(new View.OnClickListener() { //פונקציית חזרה למסך הראשי של ההתחברות והרשמה, פועלת כאשר לוחצים על כפתור חזור
             @Override
