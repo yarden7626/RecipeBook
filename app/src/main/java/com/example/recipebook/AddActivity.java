@@ -1,10 +1,14 @@
 package com.example.recipebook;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -61,17 +65,26 @@ public class AddActivity extends AppCompatActivity {
 
         ImageButton backBtnAdd = findViewById(R.id.backButtonAdd);
         backBtnAdd.setOnClickListener(v -> {
-            AlertDialog dialog = new AlertDialog.Builder(AddActivity.this)
-                    .setMessage("Are you sure you want to exit? Your data will not be saved")
+            // יצירת הדיאלוג באמצעות MaterialAlertDialogBuilder
+            MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(AddActivity.this);
+            dialogBuilder.setMessage("Are you sure you want to exit?                    Your data will not be saved")
                     .setCancelable(false)
                     .setPositiveButton("Yes", (dialog1, which) -> {
                         Intent intent = new Intent(AddActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     })
-                    .setNegativeButton("Cancel", null)
-                    .create();
+                    .setNegativeButton("Cancel", null);
+
+            // יצירת הדיאלוג
+            androidx.appcompat.app.AlertDialog dialog = dialogBuilder.create();
             dialog.show();
+
+            // הגדרת צבעים לכפתורים
+            dialog.setOnShowListener(dialogInterface -> {
+                dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(AddActivity.this, R.color.green)); // כפתור "Yes"
+                dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(AddActivity.this, R.color.red)); // כפתור "Cancel"
+            });
         });
     }
 }
