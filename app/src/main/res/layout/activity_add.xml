@@ -75,25 +75,27 @@
     <!-- כפתור העלאת תמונה -->
     <ImageView
         android:id="@+id/addImage"
-        android:layout_width="97dp"
-        android:layout_height="82dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="28dp"
+        android:minHeight="48dp"
         android:src="@drawable/plate_icon"
+        android:layout_marginEnd="50dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/formContainer" />
+        app:layout_constraintTop_toBottomOf="@id/timerButton" />
 
     <!-- כפתור העלאת תמונה -->
     <Button
         android:id="@+id/AddPhotoBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="162dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/button_background"
-        android:text="Upload Photo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addImage" />
+        android:text="Uplode Photo"
+        android:textSize="17sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/AddTimer" />
 
     <!-- כפתור בחירת קטגוריה -->
     <Button
@@ -113,11 +115,11 @@
         android:id="@+id/categorySpinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
         android:layout_margin="16dp"
         android:layout_marginTop="16dp"
         android:minHeight="48dp"
-        app:layout_constraintEnd_toStartOf="@id/addImage"
-        app:layout_constraintStart_toEndOf="@id/categoryButton"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/formContainer" />
 
     <!-- כפתור הוספת טיימר -->
@@ -127,7 +129,7 @@
         android:layout_width="162dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="27dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/button_background"
         android:text="Choose Time"
         android:textSize="17sp"
@@ -139,12 +141,12 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="50dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="Set Timer"
         android:scaleType="fitCenter"
         android:src="@drawable/timer_icon"
-        app:layout_constraintEnd_toStartOf="@id/AddPhotoBtn"
-        app:layout_constraintStart_toEndOf="@id/AddTimer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/categorySpinner" />
 
 
