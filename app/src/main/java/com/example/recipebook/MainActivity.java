@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         // קישור ה-Adapter ל-RecyclerView
         recyclerView.setAdapter(recipeAdapter);
 
-       Button addRecipeBtn = findViewById(R.id.addRecipeBtn);
+        FloatingActionButton addRecipeBtn = findViewById(R.id.addRecipeBtn);
        //פונקציה שפועלת כאשר לוחצים על כפתור הפלוס ומעבירה למסך הוספת מתכון חדש
        addRecipeBtn.setOnClickListener(v -> {
            Intent intent = new Intent(MainActivity.this , AddActivity.class);

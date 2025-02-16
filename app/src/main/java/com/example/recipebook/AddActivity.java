@@ -72,7 +72,6 @@ public class AddActivity extends AppCompatActivity {
                     .setPositiveButton("Yes", (dialog1, which) -> {
                         Intent intent = new Intent(AddActivity.this, MainActivity.class);
                         startActivity(intent);
-                        finish();
                     })
                     .setNegativeButton("Cancel", null);
 
