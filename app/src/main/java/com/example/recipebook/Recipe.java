@@ -1,7 +1,5 @@
 package com.example.recipebook;
 
-import android.content.Context;
-
 import java.util.List;
 
 public class Recipe {
@@ -10,18 +8,18 @@ public class Recipe {
     private String category; //קטגוריה של המתכון
     private int prepTime; //זמן הכנה בדקות
     private String instructions; //הוראות הכנה
-    private String image; //תמונה של המתכון
-    private int isFavorite; // האם המתכון במועדפים (0 או 1)
+    private String imageUri; //תמונה של המתכון
+    private boolean isFavorite; //האם המתכון במועדפ
     private List<Ingredient> ingredients; // רשימה של רכיבים במתכון
 
     // פעולה בונה
-    public Recipe(String recipeId, String recipeName, String category, int prepTime, String instructions, String image, int isFavorite, List<Ingredient> ingredients) {
+    public Recipe(String recipeId, String recipeName, String category, int prepTime, String instructions, String image, boolean isFavorite, List<Ingredient> ingredients) {
         this.recipeId = recipeId;
         this.recipeName = recipeName;
         this.category = category;
         this.prepTime = prepTime;
         this.instructions = instructions;
-        this.image = image;
+        this.imageUri = image;
         this.isFavorite = isFavorite;
         this.ingredients = ingredients;
     }
@@ -74,19 +72,19 @@ public class Recipe {
         this.instructions = instructions;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageUri() {
+        return imageUri;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 
-    public int getIsFavorite() {
+    public boolean getIsFavorite() {
         return isFavorite;
     }
 
-    public void setIsFavorite(int isFavorite) {
+    public void setIsFavorite(boolean isFavorite) {
         this.isFavorite = isFavorite;
     }
 
@@ -107,7 +105,7 @@ public class Recipe {
                 ", category='" + category + '\'' +
                 ", prepTime=" + prepTime +
                 ", instructions='" + instructions + '\'' +
-                ", image='" + image + '\'' +
+                ", image='" + imageUri + '\'' +
                 ", isFavorite=" + isFavorite +
                 ", ingredients=" + ingredients +
                 '}';

@@ -40,7 +40,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         holder.recipeName.setText(recipe.getRecipeName());
 
         // מציג את הכוכב לפי אם המתכון במועדפים
-        if (recipe.getIsFavorite() == 1) {
+        if (recipe.getIsFavorite() == true) {
             holder.favoriteIcon.setImageResource(R.drawable.ic_star_filled); // כוכב מלא אם במועדפים
         } else {
             holder.favoriteIcon.setImageResource(R.drawable.ic_star_empty); // כוכב ריק אם לא במועדפים
