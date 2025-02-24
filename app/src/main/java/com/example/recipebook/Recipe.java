@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.List;
 
 public class Recipe {
-    private int recipeId; //המספר זיהוי של המתכון
+    private String recipeId; //המספר זיהוי של המתכון
     private String recipeName; //שם המתכון
     private String category; //קטגוריה של המתכון
     private int prepTime; //זמן הכנה בדקות
@@ -15,7 +15,7 @@ public class Recipe {
     private List<Ingredient> ingredients; // רשימה של רכיבים במתכון
 
     // פעולה בונה
-    public Recipe(int recipeId, String recipeName, String category, int prepTime, String instructions, String image, int isFavorite, List<Ingredient> ingredients) {
+    public Recipe(String recipeId, String recipeName, String category, int prepTime, String instructions, String image, int isFavorite, List<Ingredient> ingredients) {
         this.recipeId = recipeId;
         this.recipeName = recipeName;
         this.category = category;
@@ -34,11 +34,11 @@ public class Recipe {
     }
 
     // פעולות מאחזרות ומשנות לכל תכונה
-    public int getRecipeId() {
+    public String getRecipeId() {
         return recipeId;
     }
 
-    public void setRecipeId(int recipeId) {
+    public void setRecipeId(String recipeId) {
         this.recipeId = recipeId;
     }
 
