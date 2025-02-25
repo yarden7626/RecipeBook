@@ -10,18 +10,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
 
     private ArrayList<Recipe> recipeList;
     private Context context;
+    private DatabaseReference mDatabase;
 
     public RecipeAdapter(ArrayList<Recipe> recipeList, Context context) {
         this.recipeList = recipeList;
         this.context = context;
+        this.mDatabase = FirebaseDatabase.getInstance().getReference("recipes"); // הפנייה לבסיס הנתונים
     }
-
 
     @NonNull
     @Override
@@ -45,6 +49,21 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         } else {
             holder.favoriteIcon.setImageResource(R.drawable.ic_star_empty); // כוכב ריק אם לא במועדפים
         }
+
+        // הוספת OnClickListener לכוכב
+        holder.favoriteIcon.setOnClickListener(v -> {
+            // אם המתכון במועדפים, הסר אותו מהמועדפים, אחרת הוסף אותו
+            if (recipe.getIsFavorite()) {
+                recipe.setIsFavorite(false); // הסר מהמועדפים
+                holder.favoriteIcon.setImageResource(R.drawable.ic_star_empty); // עדכון אייקון לכוכב ריק
+            } else {
+                recipe.setIsFavorite(true); // הוסף למועדפים
+                holder.favoriteIcon.setImageResource(R.drawable.ic_star_filled); // עדכון אייקון לכוכב מלא
+            }
+
+            // עדכון המידע ב-Firebase
+            mDatabase.child(recipe.getRecipeId()).child("isFavorite").setValue(recipe.getIsFavorite());
+        });
     }
 
     @Override
@@ -65,4 +84,4 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             favoriteIcon = itemView.findViewById(R.id.favoriteIcon);
         }
     }
-    }
+}

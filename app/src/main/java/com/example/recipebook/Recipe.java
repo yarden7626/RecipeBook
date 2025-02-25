@@ -6,19 +6,19 @@ public class Recipe {
     private String recipeId; //המספר זיהוי של המתכון
     private String recipeName; //שם המתכון
     private String category; //קטגוריה של המתכון
-    private int prepTime; //זמן הכנה בדקות
+    private String prepTime; //זמן הכנה בדקות
     private String directions; //הוראות הכנה
     private String imageUri; //תמונה של המתכון
-    private int isFavorite; // האם המתכון במועדפים
-    private List<Ingredient> ingredients; // רשימה של רכיבים במתכון
+    private boolean isFavorite; //האם המתכון במועדפים
+    private String ingredients; // רשימה של רכיבים במתכון
 
     // פעולה בונה
-    public Recipe(String recipeId, String recipeName, String category, int prepTime, String instructions, String image, int isFavorite, List<Ingredient> ingredients) {
+    public Recipe(String recipeId, String recipeName, String category, String prepTime, String directions, String image, boolean isFavorite, String ingredients) {
         this.recipeId = recipeId;
         this.recipeName = recipeName;
         this.category = category;
         this.prepTime = prepTime;
-        this.directions = instructions;
+        this.directions = directions;
         this.imageUri = image;
         this.isFavorite = isFavorite;
         this.ingredients = ingredients;
@@ -56,11 +56,11 @@ public class Recipe {
         this.category = category;
     }
 
-    public int getPrepTime() {
+    public String getPrepTime() {
         return prepTime;
     }
 
-    public void setPrepTime(int prepTime) {
+    public void setPrepTime(String prepTime) {
         this.prepTime = prepTime;
     }
 
@@ -80,20 +80,19 @@ public class Recipe {
         this.imageUri = imageUri;
     }
 
-    public int getIsFavorite() {
+    public boolean getIsFavorite() {
         return isFavorite;
     }
 
-    public void setIsFavorite(int isFavorite) {
+    public void setIsFavorite(boolean isFavorite) {
         this.isFavorite = isFavorite;
     }
 
-
-    public List<Ingredient> getIngredients() {
+    public String getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
+    public void setIngredients(String ingredients) {
         this.ingredients = ingredients;
     }
 
