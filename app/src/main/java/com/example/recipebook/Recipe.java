@@ -7,18 +7,18 @@ public class Recipe {
     private String recipeName; //שם המתכון
     private String category; //קטגוריה של המתכון
     private int prepTime; //זמן הכנה בדקות
-    private String instructions; //הוראות הכנה
+    private String directions; //הוראות הכנה
     private String imageUri; //תמונה של המתכון
-    private boolean isFavorite; //האם המתכון במועדפ
+    private int isFavorite; // האם המתכון במועדפים
     private List<Ingredient> ingredients; // רשימה של רכיבים במתכון
 
     // פעולה בונה
-    public Recipe(String recipeId, String recipeName, String category, int prepTime, String instructions, String image, boolean isFavorite, List<Ingredient> ingredients) {
+    public Recipe(String recipeId, String recipeName, String category, int prepTime, String instructions, String image, int isFavorite, List<Ingredient> ingredients) {
         this.recipeId = recipeId;
         this.recipeName = recipeName;
         this.category = category;
         this.prepTime = prepTime;
-        this.instructions = instructions;
+        this.directions = instructions;
         this.imageUri = image;
         this.isFavorite = isFavorite;
         this.ingredients = ingredients;
@@ -64,12 +64,12 @@ public class Recipe {
         this.prepTime = prepTime;
     }
 
-    public String getInstructions() {
-        return instructions;
+    public String getDirections() {
+        return directions;
     }
 
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
+    public void setDirections(String directions) {
+        this.directions = directions;
     }
 
     public String getImageUri() {
@@ -80,13 +80,14 @@ public class Recipe {
         this.imageUri = imageUri;
     }
 
-    public boolean getIsFavorite() {
+    public int getIsFavorite() {
         return isFavorite;
     }
 
-    public void setIsFavorite(boolean isFavorite) {
+    public void setIsFavorite(int isFavorite) {
         this.isFavorite = isFavorite;
     }
+
 
     public List<Ingredient> getIngredients() {
         return ingredients;
@@ -104,7 +105,7 @@ public class Recipe {
                 ", recipeName='" + recipeName + '\'' +
                 ", category='" + category + '\'' +
                 ", prepTime=" + prepTime +
-                ", instructions='" + instructions + '\'' +
+                ", instructions='" + directions + '\'' +
                 ", image='" + imageUri + '\'' +
                 ", isFavorite=" + isFavorite +
                 ", ingredients=" + ingredients +
