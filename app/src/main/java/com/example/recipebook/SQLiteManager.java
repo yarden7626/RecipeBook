@@ -76,6 +76,25 @@ public class SQLiteManager extends SQLiteOpenHelper {
         }
     }
 
+
+
+    public void updateRecipeInDB(Recipe recipe) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(RECIPENAME_FIELD, recipe.getRecipeName());
+        values.put(PREPARATIONTIME_FIELD, recipe.getPrepTime());
+        values.put(INGREDIENTS_FIELD, recipe.getIngredients());
+        values.put(DIRECTIONS_FIELD, recipe.getDirections());
+        values.put(CATEGORY_FIELD, recipe.getCategory());
+        values.put(ISFAVORITE_FIELD, recipe.getIsFavorite());
+        values.put(IMAGEURI_FIELD, recipe.getImageUri());
+        values.put(USERID_FIELD, recipe.getUserId());
+
+        db.update(TABLE_NAME, values, ID_FIELD + " = ?", new String[]{recipe.getRecipeId()});
+        Log.d("DB_SQLITE", "Updated recipe with ID: " + recipe.getRecipeId());
+    }
+
     public void addRecipeToDB(Recipe recipe) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -94,7 +113,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
         Log.d("DB_SQLITE","db.insert("+TABLE_NAME+", null, "+values+");" );
     }
 
-    public ArrayList<Recipe> populateRecipesFromDB() {
+    public ArrayList<Recipe> getListRecipesFromDB() {
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<Recipe> recipeList = new ArrayList<>();
 

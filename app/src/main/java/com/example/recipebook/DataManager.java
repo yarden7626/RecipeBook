@@ -21,7 +21,7 @@ public class DataManager {
 
     public ArrayList<Recipe> getRecipeListInfo(String userID) //מחזירה את המידע של כל המתכונים ששייכים למשתמש לפי התז שהתקבל
     {
-        return getRecipeListInfo(userID);
+        return sqLiteManager.getListRecipesFromDB();
 
     }
 
@@ -29,10 +29,14 @@ public class DataManager {
     public void upDateRecipe(Recipe recipe)
     {
 
+        sqLiteManager.updateRecipeInDB(recipe);
+
     }
 
     public void AddRecipe(Recipe recipe) //מוסיף לdatabase מתכון חדש
     {
+
+        sqLiteManager.addRecipeToDB(recipe);
 
     }
 
