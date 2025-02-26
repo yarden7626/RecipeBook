@@ -1,21 +1,27 @@
 package com.example.recipebook;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 
-public class DataManger {
+public class DataManager {
 
-    public Recipe getInfo(int index) //שולף מידע ממתכון לפי אינדקס המתכון שהתקבל
-    {
+    Context context;
+    SQLiteManager sqLiteManager;
 
+    public DataManager(Context context) {
+        this.context = context;
+        sqLiteManager = new SQLiteManager(context);
     }
-
-    public Recipe getInfo(String name) //שולף מידע ממתכון לפי שם המתכון שהתקבל
+    public Recipe getInfo(String index) //שולף מידע ממתכון לפי אינדקס המתכון שהתקבל
     {
+        return sqLiteManager.getRecipeById(index);
 
     }
 
     public ArrayList<Recipe> getRecipeListInfo(String userID) //מחזירה את המידע של כל המתכונים ששייכים למשתמש לפי התז שהתקבל
     {
+        return getRecipeListInfo(userID);
 
     }
 

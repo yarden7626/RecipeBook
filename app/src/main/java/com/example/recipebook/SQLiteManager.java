@@ -16,7 +16,6 @@ public class SQLiteManager extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "recipes.db";
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_NAME = "Recipes";
-    private static final String COUNTER = "counter";
 
     private static final String ID_FIELD = "id";
     private static final String RECIPENAME_FIELD = "recipeName";
@@ -47,10 +46,8 @@ public class SQLiteManager extends SQLiteOpenHelper {
         sql.append("CREATE TABLE ")
                 .append(TABLE_NAME)
                 .append(" (")
-                .append(COUNTER)
-                .append(" INTEGER PRIMARY KEY AUTOINCREMENT, ")
                 .append(ID_FIELD)
-                .append(" INTEGER, ")
+                .append(" INTEGER PRIMARY KEY AUTOINCREMENT, ")
                 .append(USERID_FIELD)
                 .append(" INTEGER, ")
                 .append(RECIPENAME_FIELD)
@@ -83,7 +80,6 @@ public class SQLiteManager extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(ID_FIELD, recipe.getRecipeId());
         values.put(RECIPENAME_FIELD, recipe.getRecipeName());
         values.put(PREPARATIONTIME_FIELD, recipe.getPrepTime());
         values.put(INGREDIENTS_FIELD, recipe.getIngredients());
@@ -130,6 +126,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         try (Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", new String[]{recipeId})) {
             if (cursor != null && cursor.moveToFirst()) {
+
                 String recipeName = cursor.getString(cursor.getColumnIndexOrThrow(RECIPENAME_FIELD));
                 String category = cursor.getString(cursor.getColumnIndexOrThrow(CATEGORY_FIELD));
                 String prepTime = cursor.getString(cursor.getColumnIndexOrThrow(PREPARATIONTIME_FIELD));
