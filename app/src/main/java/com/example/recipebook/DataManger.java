@@ -14,8 +14,22 @@ public class DataManger {
 
     }
 
-    public ArrayList<Recipe> getInfo(String userID) //שולף מידע של מתכון מרשימת מתכונים לפי התז מתכון שהתקבל
+    public ArrayList<Recipe> getRecipeListInfo(String userID) //מחזירה את המידע של כל המתכונים ששייכים למשתמש לפי התז שהתקבל
     {
 
     }
+
+    //מעדכן מתכון ואפשר לזהות את המתכון בזכות התכונה של המספר זהות של המתכון
+    public void upDateRecipe(Recipe recipe)
+    {
+
+    }
+
+    public void AddRecipe(Recipe recipe) //מוסיף לdatabase מתכון חדש
+    {
+
+    }
+
+
+
 }

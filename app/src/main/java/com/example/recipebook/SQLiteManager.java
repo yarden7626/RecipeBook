@@ -27,6 +27,9 @@ public class SQLiteManager extends SQLiteOpenHelper {
     private static final String ISFAVORITE_FIELD = "isFavorite";
     private static final String IMAGEURI_FIELD = "ImageUri";
 
+    private static final String USERID_FIELD = "userID";
+
+
     public SQLiteManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -48,6 +51,8 @@ public class SQLiteManager extends SQLiteOpenHelper {
                 .append(" INTEGER PRIMARY KEY AUTOINCREMENT, ")
                 .append(ID_FIELD)
                 .append(" INTEGER, ")
+                .append(USERID_FIELD)
+                .append(" INTEGER, ")
                 .append(RECIPENAME_FIELD)
                 .append(" TEXT, ")
                 .append(PREPARATIONTIME_FIELD)
@@ -68,14 +73,17 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        onCreate(db);
+        if(newVersion>oldVersion) {
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+            onCreate(db);
+        }
     }
 
     public void addRecipeToDB(Recipe recipe) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(ID_FIELD, recipe.getRecipeId());
         values.put(RECIPENAME_FIELD, recipe.getRecipeName());
         values.put(PREPARATIONTIME_FIELD, recipe.getPrepTime());
         values.put(INGREDIENTS_FIELD, recipe.getIngredients());
@@ -83,8 +91,11 @@ public class SQLiteManager extends SQLiteOpenHelper {
         values.put(CATEGORY_FIELD, recipe.getCategory());
         values.put(ISFAVORITE_FIELD, recipe.getIsFavorite());
         values.put(IMAGEURI_FIELD, recipe.getImageUri());
+        values.put(USERID_FIELD, recipe.getUserId());
 
-        db.insert(TABLE_NAME, null, values); // אין צורך לשים את ה-ID כאן
+
+        db.insert(TABLE_NAME, null, values);
+        Log.d("DB_SQLITE","db.insert("+TABLE_NAME+", null, "+values+");" );
     }
 
     public ArrayList<Recipe> populateRecipesFromDB() {
@@ -93,7 +104,8 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
         try (Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null)) {
             while (cursor.moveToNext()) {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow(ID_FIELD));
+
+                String id = cursor.getString(cursor.getColumnIndexOrThrow(ID_FIELD));
                 String recipeName = cursor.getString(cursor.getColumnIndexOrThrow(RECIPENAME_FIELD));
                 String category = cursor.getString(cursor.getColumnIndexOrThrow(CATEGORY_FIELD));
                 String prepTime = cursor.getString(cursor.getColumnIndexOrThrow(PREPARATIONTIME_FIELD)); // prepTime as String
@@ -101,8 +113,10 @@ public class SQLiteManager extends SQLiteOpenHelper {
                 String imageUri = cursor.getString(cursor.getColumnIndexOrThrow(IMAGEURI_FIELD));
                 boolean isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow(ISFAVORITE_FIELD)) == 1;
                 String ingredients = cursor.getString(cursor.getColumnIndexOrThrow(INGREDIENTS_FIELD));
+                String userId = cursor.getString(cursor.getColumnIndexOrThrow(USERID_FIELD));
 
-                Recipe recipe = new Recipe(String.valueOf(id), recipeName, category, prepTime, directions, imageUri, isFavorite, ingredients);
+
+                Recipe recipe = new Recipe(id, recipeName, category, prepTime, directions, imageUri, isFavorite, ingredients, userId);
                 recipeList.add(recipe);
             }
         } catch (Exception e) {
@@ -123,8 +137,10 @@ public class SQLiteManager extends SQLiteOpenHelper {
                 String imageUri = cursor.getString(cursor.getColumnIndexOrThrow(IMAGEURI_FIELD));
                 boolean isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow(ISFAVORITE_FIELD)) == 1;
                 String ingredients = cursor.getString(cursor.getColumnIndexOrThrow(INGREDIENTS_FIELD));
+                String userId = cursor.getString(cursor.getColumnIndexOrThrow(USERID_FIELD));
 
-                return new Recipe(recipeId, recipeName, category, prepTime, directions, imageUri, isFavorite, ingredients);
+
+                return new Recipe(recipeId, recipeName, category, prepTime, directions, imageUri, isFavorite, ingredients, userId);
             }
         } catch (Exception e) {
             Log.e("SQLiteManager", "Error while reading recipe by ID", e);

@@ -12,8 +12,10 @@ public class Recipe {
     private boolean isFavorite; //האם המתכון במועדפים
     private String ingredients; // רשימה של רכיבים במתכון
 
+    private String userId; //מספר זיהוי של המשתמש
+
     // פעולה בונה
-    public Recipe(String recipeId, String recipeName, String category, String prepTime, String directions, String image, boolean isFavorite, String ingredients) {
+    public Recipe(String recipeId, String recipeName, String category, String prepTime, String directions, String image, boolean isFavorite, String ingredients, String userId) {
         this.recipeId = recipeId;
         this.recipeName = recipeName;
         this.category = category;
@@ -22,6 +24,7 @@ public class Recipe {
         this.imageUri = image;
         this.isFavorite = isFavorite;
         this.ingredients = ingredients;
+        this.userId = userId;
     }
 
     //  פעולה בונה היוצרת מתכון ריק
@@ -96,6 +99,15 @@ public class Recipe {
         this.ingredients = ingredients;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+
     // הדפסת המתכון עם רכיבים
     @Override
     public String toString() {
@@ -108,6 +120,7 @@ public class Recipe {
                 ", image='" + imageUri + '\'' +
                 ", isFavorite=" + isFavorite +
                 ", ingredients=" + ingredients +
+                ", userId=" + userId +
                 '}';
     }
 }
