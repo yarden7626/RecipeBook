@@ -13,7 +13,7 @@ public class DataManager {
         this.context = context;
         sqLiteManager = new SQLiteManager(context);
     }
-    public Recipe getInfo(String index) //שולף מידע ממתכון לפי אינדקס המתכון שהתקבל
+    public Recipe getInfo(int index) //שולף מידע ממתכון לפי אינדקס המתכון שהתקבל
     {
         return sqLiteManager.getRecipeById(index);
 
@@ -21,7 +21,7 @@ public class DataManager {
 
     public ArrayList<Recipe> getRecipeListInfo(String userID) //מחזירה את המידע של כל המתכונים ששייכים למשתמש לפי התז שהתקבל
     {
-        return sqLiteManager.getListRecipesFromDB();
+        return sqLiteManager.getListRecipesFromDB(userID);
 
     }
 

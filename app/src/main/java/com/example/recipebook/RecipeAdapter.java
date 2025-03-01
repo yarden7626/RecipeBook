@@ -44,7 +44,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         holder.recipeName.setText(recipe.getRecipeName());
 
         // מציג את הכוכב לפי אם המתכון במועדפים
-        if (recipe.getIsFavorite() == true) {
+        if (recipe.getIsFavorite()) {
             holder.favoriteIcon.setImageResource(R.drawable.ic_star_filled); // כוכב מלא אם במועדפים
         } else {
             holder.favoriteIcon.setImageResource(R.drawable.ic_star_empty); // כוכב ריק אם לא במועדפים
@@ -62,7 +62,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             }
 
             // עדכון המידע ב-Firebase
-            mDatabase.child(recipe.getRecipeId()).child("isFavorite").setValue(recipe.getIsFavorite());
+            mDatabase.child(String.valueOf(recipe.getRecipeId())).child("isFavorite").setValue(recipe.getIsFavorite());
+            recipeList.set(position, recipe); // עדכון הפריט ברשימה המקומית
+            notifyItemChanged(position); // עדכון ה-RecyclerView להצגת השינוי
         });
     }
 

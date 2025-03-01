@@ -3,7 +3,7 @@ package com.example.recipebook;
 import java.util.List;
 
 public class Recipe {
-    private String recipeId; //המספר זיהוי של המתכון
+    private int recipeId; //המספר זיהוי של המתכון
     private String recipeName; //שם המתכון
     private String category; //קטגוריה של המתכון
     private String prepTime; //זמן הכנה בדקות
@@ -15,7 +15,7 @@ public class Recipe {
     private String userId; //מספר זיהוי של המשתמש
 
     // פעולה בונה
-    public Recipe(String recipeId, String recipeName, String category, String prepTime, String directions, String image, boolean isFavorite, String ingredients, String userId) {
+    public Recipe(int recipeId, String recipeName, String category, String prepTime, String directions, String image, boolean isFavorite, String ingredients, String userId) {
         this.recipeId = recipeId;
         this.recipeName = recipeName;
         this.category = category;
@@ -35,11 +35,11 @@ public class Recipe {
     }
 
     // פעולות מאחזרות ומשנות לכל תכונה
-    public String getRecipeId() {
+    public int getRecipeId() {
         return recipeId;
     }
 
-    public void setRecipeId(String recipeId) {
+    public void setRecipeId(int recipeId) {
         this.recipeId = recipeId;
     }
 
@@ -108,7 +108,6 @@ public class Recipe {
     }
 
 
-    // הדפסת המתכון עם רכיבים
     @Override
     public String toString() {
         return "Recipe{" +
@@ -119,8 +118,8 @@ public class Recipe {
                 ", instructions='" + directions + '\'' +
                 ", image='" + imageUri + '\'' +
                 ", isFavorite=" + isFavorite +
-                ", ingredients=" + ingredients +
+                ", ingredients='" + String.join(", ", ingredients) + '\'' +
                 ", userId=" + userId +
                 '}';
+     }
     }
-}

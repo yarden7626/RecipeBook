@@ -70,14 +70,13 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(newVersion>oldVersion) {
+        if(newVersion > oldVersion) {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
             onCreate(db);
         }
     }
 
-
-
+    // עדכון המתכון בבסיס הנתונים
     public void updateRecipeInDB(Recipe recipe) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -91,10 +90,11 @@ public class SQLiteManager extends SQLiteOpenHelper {
         values.put(IMAGEURI_FIELD, recipe.getImageUri());
         values.put(USERID_FIELD, recipe.getUserId());
 
-        db.update(TABLE_NAME, values, ID_FIELD + " = ?", new String[]{recipe.getRecipeId()});
+        db.update(TABLE_NAME, values, ID_FIELD + " = ?", new String[]{String.valueOf(recipe.getRecipeId())});
         Log.d("DB_SQLITE", "Updated recipe with ID: " + recipe.getRecipeId());
     }
 
+    // הוספת מתכון חדש
     public void addRecipeToDB(Recipe recipe) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -108,28 +108,28 @@ public class SQLiteManager extends SQLiteOpenHelper {
         values.put(IMAGEURI_FIELD, recipe.getImageUri());
         values.put(USERID_FIELD, recipe.getUserId());
 
-
         db.insert(TABLE_NAME, null, values);
         Log.d("DB_SQLITE","db.insert("+TABLE_NAME+", null, "+values+");" );
     }
 
-    public ArrayList<Recipe> getListRecipesFromDB() {
+    // קבלת רשימת המתכונים לפי userID
+    public ArrayList<Recipe> getListRecipesFromDB(String userID) {
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<Recipe> recipeList = new ArrayList<>();
 
-        try (Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null)) {
+        // מבצע SELECT עם תנאי על userID
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + USERID_FIELD + " = ?", new String[]{userID})) {
             while (cursor.moveToNext()) {
 
-                String id = cursor.getString(cursor.getColumnIndexOrThrow(ID_FIELD));
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(ID_FIELD)); // שינוי ל-int
                 String recipeName = cursor.getString(cursor.getColumnIndexOrThrow(RECIPENAME_FIELD));
                 String category = cursor.getString(cursor.getColumnIndexOrThrow(CATEGORY_FIELD));
-                String prepTime = cursor.getString(cursor.getColumnIndexOrThrow(PREPARATIONTIME_FIELD)); // prepTime as String
+                String prepTime = cursor.getString(cursor.getColumnIndexOrThrow(PREPARATIONTIME_FIELD));
                 String directions = cursor.getString(cursor.getColumnIndexOrThrow(DIRECTIONS_FIELD));
                 String imageUri = cursor.getString(cursor.getColumnIndexOrThrow(IMAGEURI_FIELD));
                 boolean isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow(ISFAVORITE_FIELD)) == 1;
                 String ingredients = cursor.getString(cursor.getColumnIndexOrThrow(INGREDIENTS_FIELD));
                 String userId = cursor.getString(cursor.getColumnIndexOrThrow(USERID_FIELD));
-
 
                 Recipe recipe = new Recipe(id, recipeName, category, prepTime, directions, imageUri, isFavorite, ingredients, userId);
                 recipeList.add(recipe);
@@ -141,9 +141,10 @@ public class SQLiteManager extends SQLiteOpenHelper {
         return recipeList;
     }
 
-    public Recipe getRecipeById(String recipeId) {
+    // קבלת מתכון לפי ID
+    public Recipe getRecipeById(int recipeId) {
         SQLiteDatabase db = getReadableDatabase();
-        try (Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", new String[]{recipeId})) {
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", new String[]{String.valueOf(recipeId)})) {
             if (cursor != null && cursor.moveToFirst()) {
 
                 String recipeName = cursor.getString(cursor.getColumnIndexOrThrow(RECIPENAME_FIELD));
@@ -154,7 +155,6 @@ public class SQLiteManager extends SQLiteOpenHelper {
                 boolean isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow(ISFAVORITE_FIELD)) == 1;
                 String ingredients = cursor.getString(cursor.getColumnIndexOrThrow(INGREDIENTS_FIELD));
                 String userId = cursor.getString(cursor.getColumnIndexOrThrow(USERID_FIELD));
-
 
                 return new Recipe(recipeId, recipeName, category, prepTime, directions, imageUri, isFavorite, ingredients, userId);
             }
