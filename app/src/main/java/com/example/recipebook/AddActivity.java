@@ -1,10 +1,13 @@
 package com.example.recipebook;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,10 +33,27 @@ public class AddActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "RecipePrefs";
     private static final String CATEGORY_KEY = "selectedCategoryPosition";
-    private static final int IMAGE_REQUEST_CODE = 1;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private Uri imageUri;
+
+    // יצירת Contract חדש
+    private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    imageUri = result.getData().getData();
+                    try {
+                        Bitmap bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
+                        ImageView imageView = findViewById(R.id.addImage);
+                        imageView.setImageBitmap(bitmap);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Error loading image", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +82,17 @@ public class AddActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         int savedPosition = prefs.getInt(CATEGORY_KEY, -1);
 
+        // עדכון הבחירה ב־Spinner אם יש ערך שמור
         if (savedPosition != -1) {
-            categorySpinner.post(() -> categorySpinner.setSelection(savedPosition, false));
+            categorySpinner.setSelection(savedPosition, false); // עדכון הבחירה בספינר
         }
 
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View view, int position, long id) {
+                // שמירת המיקום שנבחר ב־SharedPreferences
                 SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
-                editor.putInt(CATEGORY_KEY, position);
+                editor.putInt(CATEGORY_KEY, position); // ישירות שמירת position
                 editor.apply();
             }
 
@@ -81,7 +103,7 @@ public class AddActivity extends AppCompatActivity {
         // בחירת תמונה מהגלריה
         imageView.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, IMAGE_REQUEST_CODE);
+            imagePickerLauncher.launch(intent);
         });
 
         saveButton.setOnClickListener(v -> {
@@ -98,15 +120,15 @@ public class AddActivity extends AppCompatActivity {
 
             // יצירת מפתח ייחודי לכל מתכון
             String recipeId = databaseReference.push().getKey();
-            Map<String, Object> recipeData = new HashMap<>();
-            recipeData.put("id", recipeId);
-            recipeData.put("name", name);
-            recipeData.put("time", time);
-            recipeData.put("ingredients", ingredients);
-            recipeData.put("instructions", instructions);
-            recipeData.put("category", category);
-
             if (recipeId != null) {
+                Map<String, Object> recipeData = new HashMap<>();
+                recipeData.put("id", recipeId);
+                recipeData.put("name", name);
+                recipeData.put("time", time);
+                recipeData.put("ingredients", ingredients);
+                recipeData.put("instructions", instructions);
+                recipeData.put("category", category);
+
                 // שמירת תמונה ב-Firebase Storage
                 if (imageUri != null) {
                     StorageReference imageRef = storageReference.child(recipeId + ".jpg");
@@ -149,30 +171,30 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void saveRecipeToFirebase(Map<String, Object> recipeData) {
-        databaseReference.child((String) recipeData.get("id")).setValue(recipeData)
+        String recipeId = (String) recipeData.get("id");
+
+        // אם ה-id לא קיים, ניצור מפתח חדש
+        if (recipeId == null) {
+            recipeId = databaseReference.push().getKey(); // יצירת מפתח חדש אם id לא קיים
+            recipeData.put("id", recipeId); // עדכון ה־id במפה
+        }
+
+        // אם עדיין יש מצב ש-id הוא null, ניצור מפתח חדש
+        if (recipeId == null) {
+            // במקרה כזה, אין איך להמשיך בלי id תקני
+            Toast.makeText(AddActivity.this, "Failed to generate recipe ID", Toast.LENGTH_SHORT).show();
+            return; // יציאה מהפונקציה במקרה של כשלון
+        }
+
+        databaseReference.child(recipeId).setValue(recipeData)
                 .addOnSuccessListener(unused -> {
                     Toast.makeText(AddActivity.this, "Recipe saved successfully!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(AddActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 })
-                .addOnFailureListener(e -> Toast.makeText(AddActivity.this, "Failed to save recipe", Toast.LENGTH_SHORT).show());
-    }
-
-    // קבלת תוצאה לאחר בחירת תמונה
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            imageUri = data.getData(); // שים את ה-URI של התמונה
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri); // ייתכן שתהיה בעיה כאן
-                ImageView imageView = findViewById(R.id.addImage);
-                imageView.setImageBitmap(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error loading image", Toast.LENGTH_SHORT).show();
-            }
-        }
+                .addOnFailureListener(e -> {
+                    Toast.makeText(AddActivity.this, "Error saving recipe", Toast.LENGTH_SHORT).show();
+                });
     }
 }
