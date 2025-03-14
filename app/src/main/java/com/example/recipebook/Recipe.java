@@ -1,22 +1,24 @@
 package com.example.recipebook;
 
-import java.util.List;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity(tableName = "recipes")
 public class Recipe {
-    private int recipeId; //המספר זיהוי של המתכון
-    private String recipeName; //שם המתכון
-    private String category; //קטגוריה של המתכון
-    private String prepTime; //זמן הכנה בדקות
-    private String directions; //הוראות הכנה
-    private String imageUri; //תמונה של המתכון
-    private boolean isFavorite; //האם המתכון במועדפים
-    private String ingredients; // רשימה של רכיבים במתכון
 
-    private String userId; //מספר זיהוי של המשתמש
+    @PrimaryKey(autoGenerate = true)
+    private int recipeId; // המספר זיהוי של המתכון
+    private String recipeName; // שם המתכון
+    private String category; // קטגוריה של המתכון
+    private String prepTime; // זמן הכנה בדקות
+    private String directions; // הוראות הכנה
+    private String imageUri; // תמונה של המתכון
+    private boolean isFavorite; // האם המתכון במועדפים
+    private String ingredients; // רשימה של רכיבים במתכון
+    private String userId; // מספר זיהוי של המשתמש
 
     // פעולה בונה
-    public Recipe(int recipeId, String recipeName, String category, String prepTime, String directions, String image, boolean isFavorite, String ingredients, String userId) {
-        this.recipeId = recipeId;
+    public Recipe(String recipeName, String category, String prepTime, String directions, String image, boolean isFavorite, String ingredients, String userId) {
         this.recipeName = recipeName;
         this.category = category;
         this.prepTime = prepTime;
@@ -27,14 +29,7 @@ public class Recipe {
         this.userId = userId;
     }
 
-    //  פעולה בונה היוצרת מתכון ריק
-    public Recipe() {}
-
-    public Recipe(String recipeName) {
-        this.recipeName = recipeName;
-    }
-
-    // פעולות מאחזרות ומשנות לכל תכונה
+    // מאחזרות ומשנות
     public int getRecipeId() {
         return recipeId;
     }
@@ -106,20 +101,4 @@ public class Recipe {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
-
-    @Override
-    public String toString() {
-        return "Recipe{" +
-                "recipeId=" + recipeId +
-                ", recipeName='" + recipeName + '\'' +
-                ", category='" + category + '\'' +
-                ", prepTime=" + prepTime +
-                ", instructions='" + directions + '\'' +
-                ", image='" + imageUri + '\'' +
-                ", isFavorite=" + isFavorite +
-                ", ingredients='" + String.join(", ", ingredients) + '\'' +
-                ", userId=" + userId +
-                '}';
-     }
-    }
+}

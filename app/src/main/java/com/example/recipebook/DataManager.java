@@ -2,44 +2,37 @@ package com.example.recipebook;
 
 import android.content.Context;
 
-import java.util.ArrayList;
+import androidx.room.Room;
+
+import java.util.List;
 
 public class DataManager {
 
     Context context;
-    SQLiteManager sqLiteManager;
+    AppDatabase appDatabase;
 
     public DataManager(Context context) {
         this.context = context;
-        sqLiteManager = new SQLiteManager(context);
-    }
-    public Recipe getInfo(int index) //שולף מידע ממתכון לפי אינדקס המתכון שהתקבל
-    {
-        return sqLiteManager.getRecipeById(index);
-
+        appDatabase = Room.databaseBuilder(context, AppDatabase.class, "recipes.db").build();
     }
 
-    public ArrayList<Recipe> getRecipeListInfo(String userID) //מחזירה את המידע של כל המתכונים ששייכים למשתמש לפי התז שהתקבל
-    {
-        return sqLiteManager.getListRecipesFromDB(userID);
-
+    public Recipe getInfo(int index) {
+        // שולף מידע ממתכון לפי ID
+        return appDatabase.recipeDao().getRecipeById(index);
     }
 
-    //מעדכן מתכון ואפשר לזהות את המתכון בזכות התכונה של המספר זהות של המתכון
-    public void upDateRecipe(Recipe recipe)
-    {
-
-        sqLiteManager.updateRecipeInDB(recipe);
-
+    public List<Recipe> getRecipeListInfo(String userID) {
+        // מחזירה את כל המתכונים לפי userID
+        return appDatabase.recipeDao().getAllRecipes(userID);
     }
 
-    public void AddRecipe(Recipe recipe) //מוסיף לdatabase מתכון חדש
-    {
-
-        sqLiteManager.addRecipeToDB(recipe);
-
+    public void upDateRecipe(Recipe recipe) {
+        // מעדכן מתכון
+        appDatabase.recipeDao().update(recipe);
     }
 
-
-
+    public long addRecipe(Recipe recipe) {
+        // מוסיף מתכון חדש
+        return appDatabase.recipeDao().insert(recipe);
+    }
 }

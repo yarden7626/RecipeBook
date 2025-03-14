@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +29,15 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         signUpButton = findViewById(R.id.signUpButton);
 
-        mAuth = FirebaseAuth.getInstance();
+        //mAuth = FirebaseAuth.getInstance();
+
+
+
+        Recipe r = new Recipe("Greek salad", "salads","10", "cut and mix all", "12578", false, "tomato and olives", "357");
+        DataManager dm = new DataManager(this);
+        long rowId = dm.addRecipe(r);
+        Log.d("TestTag",r.toString());
+        Recipe r2 = dm.getInfo((int)rowId);
 
         // כניסת משתמש
         loginButton.setOnClickListener(new View.OnClickListener() {
