@@ -186,14 +186,21 @@ public class AddActivity extends AppCompatActivity {
             return; // יציאה מהפונקציה במקרה של כשלון
         }
 
+        // שמירת המתכון ב-Firebase
+        String finalRecipeId = recipeId;
         databaseReference.child(recipeId).setValue(recipeData)
                 .addOnSuccessListener(unused -> {
+                    // הודעת הצלחה
                     Toast.makeText(AddActivity.this, "Recipe saved successfully!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+
+                    // יצירת Intent ושליחה לפעילות ראשית (MainActivity) עם תוצאה
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("recipeId", finalRecipeId); // החזרת ה-ID של המתכון שנשמר
+                    setResult(RESULT_OK, resultIntent); // הגדרת תוצאה חיובית
+                    finish(); // סגירת הפעילות הנוכחית (AddActivity)
                 })
                 .addOnFailureListener(e -> {
+                    // הודעת שגיאה אם משהו משתבש
                     Toast.makeText(AddActivity.this, "Error saving recipe", Toast.LENGTH_SHORT).show();
                 });
     }
