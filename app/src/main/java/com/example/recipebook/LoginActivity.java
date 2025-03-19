@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,20 +23,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         signUpButton = findViewById(R.id.signUpButton);
-
-        //mAuth = FirebaseAuth.getInstance();
-
-
-
-        Recipe r = new Recipe("Greek salad", "salads","10", "cut and mix all", "12578", false, "tomato and olives", "357");
-        DataManager dm = new DataManager(this);
-        long rowId = dm.addRecipe(r);
-        Log.d("TestTag",r.toString());
-        Recipe r2 = dm.getInfo((int)rowId);
 
         // כניסת משתמש
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +67,8 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish(); // לסיים את ה-LoginActivity כך שלא יחזור אליו
                     } else {
-                        Toast.makeText(LoginActivity.this, "Incorrect email or password", Toast.LENGTH_SHORT).show();
+                        String errorMessage = "Login failed";
+                        Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -99,7 +92,8 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish(); // לסיים את ה-LoginActivity כך שלא יחזור אליו
                     } else {
-                        Toast.makeText(LoginActivity.this, "Registration Failed.", Toast.LENGTH_SHORT).show();
+                        String errorMessage = "Registration failed " ;
+                        Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                     }
                 });
     }
