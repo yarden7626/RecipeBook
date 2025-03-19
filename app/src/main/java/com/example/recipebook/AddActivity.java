@@ -43,6 +43,7 @@ public class AddActivity extends AppCompatActivity {
     private Uri imageUri;
     private ImageView imageView;
     private Button addPhotoBtn;
+    private Button categoryButton;
 
     // יצירת Contract חדש
     private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
@@ -74,6 +75,7 @@ public class AddActivity extends AppCompatActivity {
         EditText instructionsInput = findViewById(R.id.editDirections);
         imageView = findViewById(R.id.addImage);
         addPhotoBtn = findViewById(R.id.AddPhotoBtn);
+        categoryButton = findViewById(R.id.categoryButton);
 
         // חיבור למסד הנתונים של Firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("Recipes");
@@ -93,7 +95,6 @@ public class AddActivity extends AppCompatActivity {
         if (savedPosition != -1) {
             categorySpinner.setSelection(savedPosition, false); // עדכון הבחירה בספינר
         }
-
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View view, int position, long id) {
@@ -111,7 +112,12 @@ public class AddActivity extends AppCompatActivity {
         
         // Set click listeners for both image selection UI elements
         imageView.setOnClickListener(imageSelectionListener);
-     
+        addPhotoBtn.setOnClickListener(imageSelectionListener);
+
+        // Add click listener for category button
+        categoryButton.setOnClickListener(v -> {
+            categorySpinner.performClick();
+        });
 
         saveButton.setOnClickListener(v -> {
             String name = nameInput.getText().toString().trim();
