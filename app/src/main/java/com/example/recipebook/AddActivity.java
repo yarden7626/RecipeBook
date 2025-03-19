@@ -3,12 +3,16 @@ package com.example.recipebook;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -33,9 +37,12 @@ public class AddActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "RecipePrefs";
     private static final String CATEGORY_KEY = "selectedCategoryPosition";
+    private static final int PERMISSION_REQUEST_CODE = 100;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private Uri imageUri;
+    private ImageView imageView;
+    private Button addPhotoBtn;
 
     // יצירת Contract חדש
     private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
@@ -45,7 +52,6 @@ public class AddActivity extends AppCompatActivity {
                     imageUri = result.getData().getData();
                     try {
                         Bitmap bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
-                        ImageView imageView = findViewById(R.id.addImage);
                         imageView.setImageBitmap(bitmap);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -66,7 +72,8 @@ public class AddActivity extends AppCompatActivity {
         EditText timeInput = findViewById(R.id.editPreparationTime);
         EditText ingredientsInput = findViewById(R.id.editIngredients);
         EditText instructionsInput = findViewById(R.id.editDirections);
-        ImageView imageView = findViewById(R.id.addImage);
+        imageView = findViewById(R.id.addImage);
+        addPhotoBtn = findViewById(R.id.AddPhotoBtn);
 
         // חיבור למסד הנתונים של Firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("Recipes");
@@ -100,11 +107,11 @@ public class AddActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
 
-        // בחירת תמונה מהגלריה
-        imageView.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            imagePickerLauncher.launch(intent);
-        });
+        View.OnClickListener imageSelectionListener = v -> checkAndRequestPermission();
+        
+        // Set click listeners for both image selection UI elements
+        imageView.setOnClickListener(imageSelectionListener);
+     
 
         saveButton.setOnClickListener(v -> {
             String name = nameInput.getText().toString().trim();
@@ -168,6 +175,38 @@ public class AddActivity extends AppCompatActivity {
                 dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(AddActivity.this, R.color.red));
             });
         });
+    }
+
+    private void checkAndRequestPermission() {
+        String permission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permission = Manifest.permission.READ_MEDIA_IMAGES;
+        } else {
+            permission = Manifest.permission.READ_EXTERNAL_STORAGE;
+        }
+
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, PERMISSION_REQUEST_CODE);
+        } else {
+            openImagePicker();
+        }
+    }
+
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        imagePickerLauncher.launch(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openImagePicker();
+            } else {
+                Toast.makeText(this, "Permission denied. Cannot select image.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void saveRecipeToFirebase(Map<String, Object> recipeData) {

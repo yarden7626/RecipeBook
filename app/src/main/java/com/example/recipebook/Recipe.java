@@ -28,8 +28,11 @@ public class Recipe {
         this.ingredients = ingredients;
         this.userId = userId;
     }
+    public Recipe()
+    {
 
-    // מאחזרות ומשנות
+    };
+
     public int getRecipeId() {
         return recipeId;
     }
@@ -82,8 +85,8 @@ public class Recipe {
         return isFavorite;
     }
 
-    public void setIsFavorite(boolean isFavorite) {
-        this.isFavorite = isFavorite;
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 
     public String getIngredients() {

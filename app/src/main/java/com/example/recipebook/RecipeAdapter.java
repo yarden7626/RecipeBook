@@ -54,10 +54,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         holder.favoriteIcon.setOnClickListener(v -> {
             // אם המתכון במועדפים, הסר אותו מהמועדפים, אחרת הוסף אותו
             if (recipe.getIsFavorite()) {
-                recipe.setIsFavorite(false); // הסר מהמועדפים
+                recipe.setFavorite(false); // הסר מהמועדפים
                 holder.favoriteIcon.setImageResource(R.drawable.ic_star_empty); // עדכון אייקון לכוכב ריק
             } else {
-                recipe.setIsFavorite(true); // הוסף למועדפים
+                recipe.setFavorite(true); // הוסף למועדפים
                 holder.favoriteIcon.setImageResource(R.drawable.ic_star_filled); // עדכון אייקון לכוכב מלא
             }
 

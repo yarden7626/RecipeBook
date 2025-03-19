@@ -12,8 +12,7 @@ public class DataManager {
     AppDatabase appDatabase;
 
     public DataManager(Context context) {
-        this.context = context;
-        appDatabase = Room.databaseBuilder(context, AppDatabase.class, "recipes.db").build();
+        appDatabase = AppDatabase.getInstance(context);
     }
 
     public Recipe getInfo(int index) {
