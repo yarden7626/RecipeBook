@@ -3,6 +3,7 @@ package com.example.recipebook;
 import android.content.Context;
 
 import androidx.room.Room;
+import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
@@ -20,9 +21,9 @@ public class DataManager {
         return appDatabase.recipeDao().getRecipeById(index);
     }
 
-    public List<Recipe> getRecipeListInfo(String userID) {
-        // מחזירה את כל המתכונים לפי userID
-        return appDatabase.recipeDao().getAllRecipes(userID);
+    public LiveData<List<Recipe>> getRecipeListInfo(String userID) {
+        // מחזירה את כל המתכונים
+        return appDatabase.recipeDao().getAllRecipes();
     }
 
     public void upDateRecipe(Recipe recipe) {
@@ -30,8 +31,8 @@ public class DataManager {
         appDatabase.recipeDao().update(recipe);
     }
 
-    public long addRecipe(Recipe recipe) {
+    public void addRecipe(Recipe recipe) {
         // מוסיף מתכון חדש
-        return appDatabase.recipeDao().insert(recipe);
+        appDatabase.recipeDao().insert(recipe);
     }
 }
