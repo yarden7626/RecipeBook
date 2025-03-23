@@ -1,5 +1,6 @@
 package com.example.recipebook;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -12,7 +13,7 @@ import java.util.List;
 public interface RecipeDao {
 
     @Insert //מוסיף מתכון חדש לדאטה בייס ומחזיר את הID שלו
-    long insert(Recipe recipe);
+    void insert(Recipe recipe);
 
     @Update //מעדכן מתכון קיים
     void update(Recipe recipe);
@@ -20,9 +21,12 @@ public interface RecipeDao {
     @Delete //מוחק מתכון מהדאטה בייס
     void delete(Recipe recipe);
 
-    @Query("SELECT * FROM recipes WHERE userId = :userId") //מחזיר רשימה של כל המתכונים של משתמש מסויים
-    List<Recipe> getAllRecipes(String userId);
+    @Query("SELECT * FROM recipes")
+    LiveData<List<Recipe>> getAllRecipes();
 
-    @Query("SELECT * FROM recipes WHERE recipeId = :recipeId") //מחזיר מתכון מסויים לפי הID שלו
-    Recipe getRecipeById(int recipeId);
+    @Query("SELECT * FROM recipes WHERE id = :id")
+    Recipe הgetRecipeById(int id);
+
+    @Query("SELECT * FROM recipes WHERE category = :category")
+    LiveData<List<Recipe>> getRecipesByCategory(String category);
 }

@@ -3,71 +3,90 @@ package com.example.recipebook;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
+import androidx.lifecycle.Observer;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<Recipe> recipeList;  // הוספתי את הגדרת המשתנה
-    private RecipeAdapter recipeAdapter;    // הוספתי את הגדרת ה-Adapter
+    // הגדרת משתנים גלובליים
+    private RecyclerView recyclerView; // תצוגת רשימת המתכונים
+    private RecipeAdapter adapter; // מתאם להצגת המתכונים
+    private AppDatabase database; // אובייקט גישה לבסיס הנתונים
+    private FloatingActionButton addRecipeBtn; // כפתור הוספת מתכון
+    private ImageButton backButtonList; // כפתור חזרה
+    private FloatingActionButton filterButton; // כפתור סינון
+    private TextView titleText; // כותרת המסך
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recipeList = new ArrayList<>();  // אתחול של רשימת המתכונים
+        // אתחול בסיס הנתונים
+        database = AppDatabase.getInstance(this);
 
-        // אתחול של ה-RecyclerView
-        RecyclerView recyclerView = findViewById(R.id.rv_recipes);
+        // קישור המשתנים לאלמנטים בממשק המשתמש
+        recyclerView = findViewById(R.id.rv_recipes);
+        addRecipeBtn = findViewById(R.id.addRecipeBtn);
+        backButtonList = findViewById(R.id.backButtonList);
+        filterButton = findViewById(R.id.filterButton);
+        titleText = findViewById(R.id.title);
+
+        // הגדרת ה-RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new RecipeAdapter(this);
+        recyclerView.setAdapter(adapter);
 
-        // יצירת ה-Adapter
-        recipeAdapter = new RecipeAdapter(recipeList, this);
+        // טעינת המתכונים מבסיס הנתונים
+        loadRecipes();
 
-        // קישור ה-Adapter ל-RecyclerView
-        recyclerView.setAdapter(recipeAdapter);
-
-        FloatingActionButton addRecipeBtn = findViewById(R.id.addRecipeBtn);
-        // פונקציה שפועלת כאשר לוחצים על כפתור הפלוס ומעבירה למסך הוספת מתכון חדש
+        // הגדרת מאזיני לחיצה לכפתורים
         addRecipeBtn.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
-            startActivityForResult(intent, 1);  // שימוש ב-startActivityForResult
+            startActivityForResult(intent, 1);
         });
 
-        ImageButton backBtnList = findViewById(R.id.backButtonList);
-        // פונקציית חזרה למסך הראשי של ההתחברות והרשמה
-        backBtnList.setOnClickListener(v -> {
+        backButtonList.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent); //עובר למסך הכניסה
+            startActivity(intent);
+            finish();
+        });
+
+        // הגדרת מאזין לחיצה לכפתור הסינון
+        filterButton.setOnClickListener(v -> {
+            // TODO: להוסיף פונקציונליות סינון
+            Toast.makeText(this, "Filter functionality coming soon", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    // פונקציה לטעינת המתכונים מבסיס הנתונים
+    private void loadRecipes() {
+        database.recipeDao().getAllRecipes().observe(this, recipes -> {
+            adapter.setRecipes(recipes);
         });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                // קבלת התוצאה מהמסך של הוספת מתכון, למשל נתוני המתכון שהוזן
-                Recipe newRecipe = (Recipe) data.getSerializableExtra("newRecipe");
-
-                // הוספת המתכון לרשימה ועדכון ה-Adapter
-                if (newRecipe != null) {
-                    recipeList.add(newRecipe);
-                    recipeAdapter.notifyItemInserted(recipeList.size() - 1); // עדכון ה-RecyclerView
-                }
-            } else {
-                // טיפול במצב בו לא התקבלה תוצאה תקינה
-                Toast.makeText(this, "Failed to add recipe", Toast.LENGTH_SHORT).show();
-            }
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            // מתכון חדש נוסף - רענון הרשימה
+            loadRecipes();
+            Toast.makeText(this, "Recipe added successfully", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // רענון רשימת המתכונים בכל חזרה למסך
+        loadRecipes();
     }
 }
