@@ -17,7 +17,7 @@
         android:layout_marginBottom="8dp"
         android:gravity="start"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/favoriteIcon"
