@@ -41,10 +41,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         // מילוי הנתונים בתצוגה
         Recipe recipe = recipes.get(position);
-        holder.recipeName.setText(recipe.getName());
+        holder.recipeName.setText(recipe.getRecipeName());
 
         // הגדרת כוכב המועדפים
-        if (recipe.isFavorite()) {
+        if (recipe.getIsFavorite()) {
             holder.favoriteIcon.setImageResource(R.drawable.ic_star_filled); //כוכב מלא אם במועדפים
         } else {
             holder.favoriteIcon.setImageResource(R.drawable.ic_star_empty); //כוכב ריק אם לא במועדפים
@@ -52,7 +52,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         // הגדרת מאזין לחיצה על הכוכב
         holder.favoriteIcon.setOnClickListener(v -> {
-            recipe.setFavorite(!recipe.isFavorite());
+            recipe.setFavorite(!recipe.getIsFavorite());
             notifyItemChanged(position);
             // שמירת השינוי בבסיס הנתונים
             new Thread(() -> {
@@ -63,7 +63,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         // הגדרת מאזין לחיצה על הפריט
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, RecipeActivity.class);
-            intent.putExtra("recipe_id", recipe.getId());
+            intent.putExtra("recipe_id", recipe.getRecipeId());
             context.startActivity(intent);
         });
     }

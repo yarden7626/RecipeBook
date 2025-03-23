@@ -49,7 +49,12 @@ public class AddActivity extends AppCompatActivity {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     imageUri = result.getData().getData();
                     try {
-                        Bitmap bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
+                        Bitmap bitmap;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
+                        } else {
+                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                        }
                         addImage.setImageBitmap(bitmap);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -196,11 +201,17 @@ public class AddActivity extends AppCompatActivity {
             return;
         }
 
-        // יצירת אובייקט מתכון חדש עם URI של התמונה
-        Recipe recipe = new Recipe(name, ingredients, instructions, category);
-        if (imageUri != null) {
-            recipe.setImageUri(imageUri.toString());
-        }
+        // יצירת אובייקט מתכון חדש עם כל הפרמטרים הנדרשים
+        Recipe recipe = new Recipe(
+            name,           // recipeName
+            category,       // category
+            time,          // prepTime
+            instructions,  // directions
+            imageUri != null ? imageUri.toString() : "",  // image
+            false,         // isFavorite
+            ingredients,   // ingredients
+            "1"           // userId (משתמש קבוע כרגע)
+        );
 
         // שמירת המתכון בבסיס הנתונים
         new Thread(() -> {
@@ -209,7 +220,7 @@ public class AddActivity extends AppCompatActivity {
                 Toast.makeText(AddActivity.this, "Recipe saved successfully", Toast.LENGTH_SHORT).show();
                 // החזרת המתכון החדש למסך הראשי
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("newRecipe", recipe);
+                resultIntent.putExtra("recipeId", recipe.getRecipeId());
                 setResult(RESULT_OK, resultIntent);
                 finish();
             });
