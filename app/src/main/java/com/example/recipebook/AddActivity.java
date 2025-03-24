@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddActivity extends AppCompatActivity {
+
+    private static final String TAG = "AddActivity"; // תגית ללוגים
 
     // הגדרת משתנים גלובליים
     private EditText editRecipeName, editPreparationTime, editIngredients, editDirections; // שדות קלט למתכון
@@ -48,17 +51,39 @@ public class AddActivity extends AppCompatActivity {
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     imageUri = result.getData().getData();
+                    Log.d(TAG, "Selected image URI: " + imageUri);
                     try {
+                        // שמירת ה-URI הקבוע של התמונה
+                        final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                        getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
+                        Log.d(TAG, "Got persistent permission for URI");
+                        
+                        // המרת ה-URI ל-URI של MediaStore
+                        String[] projection = {MediaStore.Images.Media.DATA};
+                        android.database.Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
+                        if (cursor != null && cursor.moveToFirst()) {
+                            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                            String filePath = cursor.getString(columnIndex);
+                            cursor.close();
+                            
+                            // יצירת URI חדש מהנתיב
+                            imageUri = Uri.fromFile(new java.io.File(filePath));
+                            Log.d(TAG, "Converted to file URI: " + imageUri);
+                        }
+                        
                         Bitmap bitmap;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            Log.d(TAG, "Using ImageDecoder for Android P and above");
                             bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
                         } else {
+                            Log.d(TAG, "Using MediaStore for older Android versions");
                             bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                         }
                         addImage.setImageBitmap(bitmap);
+                        Log.d(TAG, "Successfully loaded image");
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, "Error loading image", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Error loading image", e);
+                        Toast.makeText(this, "Error loading image: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -107,14 +132,14 @@ public class AddActivity extends AppCompatActivity {
     // פונקציה להצגת דיאלוג יציאה
     private void showExitDialog() {
         MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(AddActivity.this);
-        dialogBuilder.setMessage("האם אתה בטוח שברצונך לצאת? הנתונים לא יישמרו")
+        dialogBuilder.setMessage("Are you sure you want to exit? Your data will not be saved")
                 .setCancelable(false)
-                .setPositiveButton("כן", (dialog1, which) -> {
+                .setPositiveButton("yes", (dialog1, which) -> {
                     Intent intent = new Intent(AddActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 })
-                .setNegativeButton("ביטול", null);
+                .setNegativeButton("cancel", null);
 
         androidx.appcompat.app.AlertDialog dialog = dialogBuilder.create();
         dialog.show();

@@ -2,14 +2,23 @@ package com.example.recipebook;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 
 public class RecipeActivity extends AppCompatActivity {
+
+    private static final String TAG = "RecipeActivity"; // תגית ללוגים
 
     // הגדרת משתנים גלובליים
     private TextView recipeTitle, cateRecipeValue, pTimeValue, ingrValue, direValue; // שדות טקסט למתכון
@@ -80,6 +89,44 @@ public class RecipeActivity extends AppCompatActivity {
         ingrValue.setText(currentRecipe.getIngredients());
         direValue.setText(currentRecipe.getDirections());
         updateFavoriteIcon();
+
+        // עדכון תמונת המתכון
+        String imageUriString = currentRecipe.getImageUri();
+        if (imageUriString != null && !imageUriString.isEmpty()) {
+            try {
+                Uri imageUri = Uri.parse(imageUriString);
+                Log.d(TAG, "Loading image from URI: " + imageUri);
+                
+                Bitmap bitmap;
+                if (imageUriString.startsWith("file://")) {
+                    // טעינת תמונה מנתיב קובץ
+                    java.io.File file = new java.io.File(imageUri.getPath());
+                    if (file.exists()) {
+                        bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        imageRecipe.setImageBitmap(bitmap);
+                        Log.d(TAG, "Successfully loaded image from file");
+                    } else {
+                        Log.e(TAG, "File does not exist: " + file.getAbsolutePath());
+                        Toast.makeText(this, "Image file not found", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // טעינת תמונה מ-ContentProvider
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
+                    } else {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    }
+                    imageRecipe.setImageBitmap(bitmap);
+                    Log.d(TAG, "Successfully loaded image from content provider");
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading image", e);
+                Toast.makeText(this, "Error loading image: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Log.d(TAG, "No image URI found");
+            imageRecipe.setImageResource(R.drawable.ic_launcher_foreground);
+        }
     }
 
     // פונקציה לעדכון אייקון המועדפים
