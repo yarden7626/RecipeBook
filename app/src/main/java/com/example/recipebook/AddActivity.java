@@ -132,7 +132,7 @@ public class AddActivity extends AppCompatActivity {
     // פונקציה להצגת דיאלוג יציאה
     private void showExitDialog() {
         MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(AddActivity.this);
-        dialogBuilder.setMessage("Are you sure you want to exit? Your data will not be saved")
+        dialogBuilder.setMessage("Are you sure you want to exit?\nYour data will not be saved")
                 .setCancelable(false)
                 .setPositiveButton("yes", (dialog1, which) -> {
                     Intent intent = new Intent(AddActivity.this, MainActivity.class);
@@ -142,6 +142,12 @@ public class AddActivity extends AppCompatActivity {
                 .setNegativeButton("cancel", null);
 
         androidx.appcompat.app.AlertDialog dialog = dialogBuilder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            Button positiveButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE);
+            Button negativeButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE);
+            positiveButton.setTextColor(getResources().getColor(android.R.color.black));
+            negativeButton.setTextColor(getResources().getColor(android.R.color.black));
+        });
         dialog.show();
     }
 
