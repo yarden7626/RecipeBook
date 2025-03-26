@@ -262,8 +262,8 @@ public class AddActivity extends AppCompatActivity {
             imageUriString,  // image
             false,         // isFavorite
             ingredients,   // ingredients
-            "1",           // userId (משתמש קבוע כרגע)
-            timerDuration  // timerDuration
+            "1",          // userId (משתמש קבוע כרגע)
+            timerDuration // timerDuration
         );
 
         // שמירת המתכון בבסיס הנתונים

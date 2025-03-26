@@ -19,21 +19,30 @@ public class Recipe {
     private int timerDuration; // זמן הטיימר בדקות
 
     // פעולה בונה
-    public Recipe(String recipeName, String category, String prepTime, String directions, String image, boolean isFavorite, String ingredients, String userId) {
+    public Recipe(String recipeName, String category, String prepTime, String directions, String imageUri, boolean isFavorite, String ingredients, String userId, int timerDuration) {
         this.recipeName = recipeName;
         this.category = category;
         this.prepTime = prepTime;
         this.directions = directions;
-        this.imageUri = image;
+        this.imageUri = imageUri;
         this.isFavorite = isFavorite;
         this.ingredients = ingredients;
         this.userId = userId;
-        this.timerDuration = 0; // ברירת מחדל - אין טיימר
+        this.timerDuration = timerDuration;
     }
-    public Recipe()
-    {
 
-    };
+    // פעולה בונה ריקה
+    public Recipe() {
+        this.recipeName = "";
+        this.category = "";
+        this.prepTime = "";
+        this.directions = "";
+        this.imageUri = "";
+        this.isFavorite = false;
+        this.ingredients = "";
+        this.userId = "";
+        this.timerDuration = 0;
+    }
 
     public int getRecipeId() {
         return recipeId;
