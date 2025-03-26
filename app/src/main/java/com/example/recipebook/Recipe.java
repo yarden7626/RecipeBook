@@ -2,6 +2,7 @@ package com.example.recipebook;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.Ignore;
 
 @Entity(tableName = "recipes")
 public class Recipe {
@@ -19,6 +20,7 @@ public class Recipe {
     private int timerDuration; // זמן הטיימר בדקות
 
     // פעולה בונה
+    @Ignore
     public Recipe(String recipeName, String category, String prepTime, String directions, String imageUri, boolean isFavorite, String ingredients, String userId, int timerDuration) {
         this.recipeName = recipeName;
         this.category = category;
@@ -31,7 +33,7 @@ public class Recipe {
         this.timerDuration = timerDuration;
     }
 
-    // פעולה בונה ריקה
+    // פעולה בונה ריקה - זו שתהיה בשימוש על ידי Room
     public Recipe() {
         this.recipeName = "";
         this.category = "";
