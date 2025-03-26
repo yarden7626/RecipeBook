@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import android.app.TimePickerDialog;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -44,6 +45,7 @@ public class AddActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final String PREFS_NAME = "RecipePrefs";
     private static final String CATEGORY_KEY = "selectedCategoryPosition";
+    private int timerDuration = 0; // זמן הטיימר בדקות
 
     // יצירת Contract חדש לבחירת תמונה
     private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
@@ -58,19 +60,7 @@ public class AddActivity extends AppCompatActivity {
                         getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
                         Log.d(TAG, "Got persistent permission for URI");
                         
-                        // המרת ה-URI ל-URI של MediaStore
-                        String[] projection = {MediaStore.Images.Media.DATA};
-                        android.database.Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
-                        if (cursor != null && cursor.moveToFirst()) {
-                            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                            String filePath = cursor.getString(columnIndex);
-                            cursor.close();
-                            
-                            // יצירת URI חדש מהנתיב
-                            imageUri = Uri.fromFile(new java.io.File(filePath));
-                            Log.d(TAG, "Converted to file URI: " + imageUri);
-                        }
-                        
+                        // הצגת התמונה בתצוגה המקדימה
                         Bitmap bitmap;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                             Log.d(TAG, "Using ImageDecoder for Android P and above");
@@ -80,10 +70,10 @@ public class AddActivity extends AppCompatActivity {
                             bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                         }
                         addImage.setImageBitmap(bitmap);
-                        Log.d(TAG, "Successfully loaded image");
+                        Log.d(TAG, "Successfully loaded image preview");
                     } catch (Exception e) {
-                        Log.e(TAG, "Error loading image", e);
-                        Toast.makeText(this, "Error loading image: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Error loading image preview", e);
+                        Toast.makeText(this, "Error loading image preview: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -127,6 +117,9 @@ public class AddActivity extends AppCompatActivity {
 
         // הגדרת כפתור קטגוריה
         categoryButton.setOnClickListener(v -> categorySpinner.performClick());
+
+        // הגדרת מאזיני לחיצה לכפתור טיימר
+        timerButton.setOnClickListener(v -> showTimerDialog());
     }
 
     // פונקציה להצגת דיאלוג יציאה
@@ -169,7 +162,8 @@ public class AddActivity extends AppCompatActivity {
 
     // פונקציה לפתיחת בוחר התמונות
     private void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
         imagePickerLauncher.launch(intent);
     }
 
@@ -217,6 +211,26 @@ public class AddActivity extends AppCompatActivity {
         });
     }
 
+    // פונקציה להצגת דיאלוג הגדרת טיימר
+    private void showTimerDialog() {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+            this,
+            (view, hourOfDay, minute) -> {
+                // המרת השעות לדקות
+                timerDuration = (hourOfDay * 60) + minute;
+                if (timerDuration > 0) {
+                    String timeText = String.format("%02d:%02d", hourOfDay, minute);
+                    Toast.makeText(this, "Timer set to " + timeText, Toast.LENGTH_SHORT).show();
+                }
+            },
+            0, // שעה התחלתית
+            0, // דקה התחלתית
+            true // פורמט 24 שעות
+        );
+        timePickerDialog.setTitle("Set Timer Duration");
+        timePickerDialog.show();
+    }
+
     // פונקציה לשמירת המתכון
     private void saveRecipe() {
         // קבלת ערכים משדות הקלט
@@ -232,16 +246,24 @@ public class AddActivity extends AppCompatActivity {
             return;
         }
 
+        // שמירת ה-URI של התמונה
+        String imageUriString = "";
+        if (imageUri != null) {
+            imageUriString = imageUri.toString();
+            Log.d(TAG, "Saving image URI: " + imageUriString);
+        }
+
         // יצירת אובייקט מתכון חדש עם כל הפרמטרים הנדרשים
         Recipe recipe = new Recipe(
             name,           // recipeName
             category,       // category
             time,          // prepTime
             instructions,  // directions
-            imageUri != null ? imageUri.toString() : "",  // image
+            imageUriString,  // image
             false,         // isFavorite
             ingredients,   // ingredients
-            "1"           // userId (משתמש קבוע כרגע)
+            "1",           // userId (משתמש קבוע כרגע)
+            timerDuration  // timerDuration
         );
 
         // שמירת המתכון בבסיס הנתונים

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
+import android.os.CountDownTimer;
 
 public class RecipeActivity extends AppCompatActivity {
 
@@ -26,6 +27,9 @@ public class RecipeActivity extends AppCompatActivity {
     private ImageButton timerButton, backButtonRecipe; // כפתורים
     private AppDatabase database; // אובייקט גישה לבסיס הנתונים
     private Recipe currentRecipe; // המתכון הנוכחי
+    private CountDownTimer countDownTimer;
+    private boolean isTimerRunning = false;
+    private long timeLeftInMillis = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +80,15 @@ public class RecipeActivity extends AppCompatActivity {
         });
 
         timerButton.setOnClickListener(v -> {
-            // TODO: להוסיף פונקציונליות טיימר
-            Toast.makeText(this, "Timer functionality coming soon", Toast.LENGTH_SHORT).show();
+            if (currentRecipe != null && currentRecipe.getTimerDuration() > 0) {
+                if (isTimerRunning) {
+                    stopTimer();
+                } else {
+                    startTimer();
+                }
+            } else {
+                Toast.makeText(this, "No timer set for this recipe", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -97,31 +108,20 @@ public class RecipeActivity extends AppCompatActivity {
                 Uri imageUri = Uri.parse(imageUriString);
                 Log.d(TAG, "Loading image from URI: " + imageUri);
                 
+                // טעינת התמונה ישירות מ-ContentProvider
                 Bitmap bitmap;
-                if (imageUriString.startsWith("file://")) {
-                    // טעינת תמונה מנתיב קובץ
-                    java.io.File file = new java.io.File(imageUri.getPath());
-                    if (file.exists()) {
-                        bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                        imageRecipe.setImageBitmap(bitmap);
-                        Log.d(TAG, "Successfully loaded image from file");
-                    } else {
-                        Log.e(TAG, "File does not exist: " + file.getAbsolutePath());
-                        Toast.makeText(this, "Image file not found", Toast.LENGTH_SHORT).show();
-                    }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
                 } else {
-                    // טעינת תמונה מ-ContentProvider
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
-                    } else {
-                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                    }
-                    imageRecipe.setImageBitmap(bitmap);
-                    Log.d(TAG, "Successfully loaded image from content provider");
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 }
+                imageRecipe.setImageBitmap(bitmap);
+                Log.d(TAG, "Successfully loaded image");
             } catch (Exception e) {
                 Log.e(TAG, "Error loading image", e);
                 Toast.makeText(this, "Error loading image: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                // במקרה של שגיאה, נציג תמונה ברירת מחדל
+                imageRecipe.setImageResource(R.drawable.ic_launcher_foreground);
             }
         } else {
             Log.d(TAG, "No image URI found");
@@ -135,6 +135,61 @@ public class RecipeActivity extends AppCompatActivity {
             isFavRecipe.setImageResource(R.drawable.ic_star_filled);
         } else {
             isFavRecipe.setImageResource(R.drawable.ic_star_empty);
+        }
+    }
+
+    private void startTimer() {
+        if (timeLeftInMillis == 0) {
+            timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000; // המרה לדקות
+        }
+
+        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
+                updateTimerUI();
+            }
+
+            @Override
+            public void onFinish() {
+                isTimerRunning = false;
+                timerButton.setImageResource(R.drawable.timer_icon);
+                Toast.makeText(RecipeActivity.this, "Timer finished!", Toast.LENGTH_SHORT).show();
+            }
+        }.start();
+
+        isTimerRunning = true;
+        timerButton.setImageResource(R.drawable.timer_icon_active);
+    }
+
+    private void stopTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            isTimerRunning = false;
+            timerButton.setImageResource(R.drawable.timer_icon);
+        }
+    }
+
+    private void updateTimerUI() {
+        int minutes = (int) (timeLeftInMillis / 1000) / 60;
+        int seconds = (int) (timeLeftInMillis / 1000) % 60;
+        String timeLeftText = String.format("%02d:%02d", minutes, seconds);
+        Toast.makeText(this, timeLeftText, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isTimerRunning) {
+            stopTimer();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (timeLeftInMillis > 0 && !isTimerRunning) {
+            startTimer();
         }
     }
 }

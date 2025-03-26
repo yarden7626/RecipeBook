@@ -16,6 +16,7 @@ public class Recipe {
     private boolean isFavorite; // האם המתכון במועדפים
     private String ingredients; // רשימה של רכיבים במתכון
     private String userId; // מספר זיהוי של המשתמש
+    private int timerDuration; // זמן הטיימר בדקות
 
     // פעולה בונה
     public Recipe(String recipeName, String category, String prepTime, String directions, String image, boolean isFavorite, String ingredients, String userId) {
@@ -27,6 +28,7 @@ public class Recipe {
         this.isFavorite = isFavorite;
         this.ingredients = ingredients;
         this.userId = userId;
+        this.timerDuration = 0; // ברירת מחדל - אין טיימר
     }
     public Recipe()
     {
@@ -103,5 +105,13 @@ public class Recipe {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public int getTimerDuration() {
+        return timerDuration;
+    }
+
+    public void setTimerDuration(int timerDuration) {
+        this.timerDuration = timerDuration;
     }
 }

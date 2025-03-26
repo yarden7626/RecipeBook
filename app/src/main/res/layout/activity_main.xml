@@ -8,7 +8,6 @@
     android:background="@color/backgroundColor"
     tools:context=".MainActivity">
 
-
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -40,7 +39,8 @@
         app:layout_constraintStart_toStartOf="parent"
         android:textSize="18sp"
         app:layout_constraintVertical_bias="0.945"
-        tools:ignore="MissingConstraints,SpeakableTextPresentCheck,VisualLintButtonSize" />
+        tools:ignore="MissingConstraints,SpeakableTextPresentCheck,VisualLintButtonSize"
+        android:contentDescription="TODO" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/filterButton"
