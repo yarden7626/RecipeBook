@@ -153,7 +153,7 @@ public class RecipeActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 isTimerRunning = false;
-                timerButton.setImageResource(R.drawable.timer_icon);
+                timerButton.setImageResource(R.drawable.timer_icon_active);
                 Toast.makeText(RecipeActivity.this, "Timer finished!", Toast.LENGTH_SHORT).show();
             }
         }.start();
@@ -166,7 +166,7 @@ public class RecipeActivity extends AppCompatActivity {
         if (countDownTimer != null) {
             countDownTimer.cancel();
             isTimerRunning = false;
-            timerButton.setImageResource(R.drawable.timer_icon);
+            timerButton.setImageResource(R.drawable.timer_icon_active);
         }
     }
 

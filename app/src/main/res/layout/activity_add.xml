@@ -145,7 +145,7 @@
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="Set Timer"
         android:scaleType="fitCenter"
-        android:src="@drawable/timer_icon"
+        android:src="@drawable/timer_icon_active"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/categorySpinner" />
 

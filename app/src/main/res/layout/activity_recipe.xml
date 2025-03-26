@@ -155,7 +155,7 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="Timer Button"
                 android:scaleType="fitCenter"
-                android:src="@drawable/timer_icon" />
+                android:src="@drawable/timer_icon_active" />
         </LinearLayout>
 
     </LinearLayout>
