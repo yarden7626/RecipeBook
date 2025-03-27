@@ -59,7 +59,7 @@ public class AddActivity extends AppCompatActivity {
                         final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
                         getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
                         Log.d(TAG, "Got persistent permission for URI");
-                        
+
                         // הצגת התמונה בתצוגה המקדימה
                         Bitmap bitmap;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -106,7 +106,7 @@ public class AddActivity extends AppCompatActivity {
 
         // הגדרת מאזיני לחיצה לכפתורים
         saveButton.setOnClickListener(v -> saveRecipe());
-        
+
         // הגדרת מאזיני לחיצה לתמונה
         View.OnClickListener imageSelectionListener = v -> checkAndRequestPermission();
         addImage.setOnClickListener(imageSelectionListener);
@@ -119,6 +119,7 @@ public class AddActivity extends AppCompatActivity {
         categoryButton.setOnClickListener(v -> categorySpinner.performClick());
 
         // הגדרת מאזיני לחיצה לכפתור טיימר
+        AddTimer.setOnClickListener(v -> showTimerDialog()); // הוספתי את הכפתור AddTimer לדיאלוג טיימר
         timerButton.setOnClickListener(v -> showTimerDialog());
     }
 
@@ -183,8 +184,8 @@ public class AddActivity extends AppCompatActivity {
     private void setupCategorySpinner() {
         // קבלת רשימת הקטגוריות מקובץ המשאבים
         String[] categories = getResources().getStringArray(R.array.recipe_categories);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, 
-            android.R.layout.simple_spinner_item, categories);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(adapter);
 
@@ -214,18 +215,18 @@ public class AddActivity extends AppCompatActivity {
     // פונקציה להצגת דיאלוג הגדרת טיימר
     private void showTimerDialog() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(
-            this,
-            (view, hourOfDay, minute) -> {
-                // המרת השעות לדקות
-                timerDuration = (hourOfDay * 60) + minute;
-                if (timerDuration > 0) {
-                    String timeText = String.format("%02d:%02d", hourOfDay, minute);
-                    Toast.makeText(this, "Timer set to " + timeText, Toast.LENGTH_SHORT).show();
-                }
-            },
-            0, // שעה התחלתית
-            0, // דקה התחלתית
-            true // פורמט 24 שעות
+                this,
+                (view, hourOfDay, minute) -> {
+                    // המרת השעות לדקות
+                    timerDuration = (hourOfDay * 60) + minute;
+                    if (timerDuration > 0) {
+                        String timeText = String.format("%02d:%02d", hourOfDay, minute);
+                        Toast.makeText(this, "Timer set to " + timeText, Toast.LENGTH_SHORT).show();
+                    }
+                },
+                0, // שעה התחלתית
+                0, // דקה התחלתית
+                true // פורמט 24 שעות
         );
         timePickerDialog.setTitle("Set Timer Duration");
         timePickerDialog.show();
@@ -255,15 +256,15 @@ public class AddActivity extends AppCompatActivity {
 
         // יצירת אובייקט מתכון חדש עם כל הפרמטרים הנדרשים
         Recipe recipe = new Recipe(
-            name,           // recipeName
-            category,       // category
-            time,          // prepTime
-            instructions,  // directions
-            imageUriString,  // image
-            false,         // isFavorite
-            ingredients,   // ingredients
-            "1",          // userId (משתמש קבוע כרגע)
-            timerDuration // timerDuration
+                name,           // recipeName
+                category,       // category
+                time,          // prepTime
+                instructions,  // directions
+                imageUriString,  // image
+                false,         // isFavorite
+                ingredients,   // ingredients
+                "1",          // userId (משתמש קבוע כרגע)
+                timerDuration // timerDuration
         );
 
         // שמירת המתכון בבסיס הנתונים
