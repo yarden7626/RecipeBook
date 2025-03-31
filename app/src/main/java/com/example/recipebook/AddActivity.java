@@ -267,6 +267,7 @@ public class AddActivity extends AppCompatActivity {
                 timerDuration // timerDuration
         );
 
+
         // שמירת המתכון בבסיס הנתונים
         new Thread(() -> {
             database.recipeDao().insert(recipe);
