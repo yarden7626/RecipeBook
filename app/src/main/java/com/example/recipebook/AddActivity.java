@@ -14,6 +14,7 @@ import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +27,12 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.TimePickerDialog;
@@ -45,7 +52,9 @@ public class AddActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final String PREFS_NAME = "RecipePrefs";
     private static final String CATEGORY_KEY = "selectedCategoryPosition";
+    private static final String CURRENT_PHOTO_PATH = "current_photo_path";
     private int timerDuration = 0; // זמן הטיימר בדקות
+    private String currentPhotoPath;
 
     // יצירת Contract חדש לבחירת תמונה
     private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
@@ -69,11 +78,53 @@ public class AddActivity extends AppCompatActivity {
                             Log.d(TAG, "Using MediaStore for older Android versions");
                             bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                         }
-                        addImage.setImageBitmap(bitmap);
-                        Log.d(TAG, "Successfully loaded image preview");
+                        
+                        // עדכון התמונה ב-ImageView
+                        runOnUiThread(() -> {
+                            addImage.setImageBitmap(bitmap);
+                            addImage.setVisibility(View.VISIBLE);
+                            Log.d(TAG, "Successfully loaded image preview");
+                        });
                     } catch (Exception e) {
                         Log.e(TAG, "Error loading image preview", e);
-                        Toast.makeText(this, "Error loading image preview: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        runOnUiThread(() -> {
+                            Toast.makeText(this, "Error loading image preview. Try again", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                }
+            }
+    );
+
+    // יצירת Contract חדש לצילום תמונה
+    private final ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    // טעינת התמונה מהקובץ השמור
+                    File photoFile = new File(currentPhotoPath);
+                    if (photoFile.exists()) {
+                        imageUri = Uri.fromFile(photoFile);
+                        try {
+                            Bitmap bitmap;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
+                            } else {
+                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                            }
+                            
+                            // עדכון התמונה ב-ImageView
+                            runOnUiThread(() -> {
+                                addImage.setImageBitmap(bitmap);
+                                addImage.setVisibility(View.VISIBLE);
+                                Log.d(TAG, "Successfully loaded camera image");
+                            });
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error loading camera image", e);
+                            runOnUiThread(() -> {
+                                Toast.makeText(this, "Error loading camera image", Toast.LENGTH_SHORT).show();
+
+                            });
+                        }
                     }
                 }
             }
@@ -108,7 +159,7 @@ public class AddActivity extends AppCompatActivity {
         saveButton.setOnClickListener(v -> saveRecipe());
 
         // הגדרת מאזיני לחיצה לתמונה
-        View.OnClickListener imageSelectionListener = v -> checkAndRequestPermission();
+        View.OnClickListener imageSelectionListener = v -> showImageSourceDialog();
         addImage.setOnClickListener(imageSelectionListener);
         AddPhotoBtn.setOnClickListener(imageSelectionListener);
 
@@ -145,6 +196,21 @@ public class AddActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    // פונקציה להצגת דיאלוג בחירת מקור התמונה
+    private void showImageSourceDialog() {
+        String[] options = {" Choose from Gallery", "Take a Photo "};
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Select Image Source")
+                .setItems(options, (dialog, item) -> {
+                    if (item == 0) {
+                        checkAndRequestPermission();
+                    } else if (item == 1) {
+                        checkAndRequestCameraPermission();
+                    }
+                })
+                .show();
+    }
+
     // פונקציה לבדיקת הרשאות
     private void checkAndRequestPermission() {
         String permission;
@@ -161,6 +227,15 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
+    // פונקציה לבדיקת הרשאות מצלמה
+    private void checkAndRequestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CODE);
+        } else {
+            openCamera();
+        }
+    }
+
     // פונקציה לפתיחת בוחר התמונות
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -168,12 +243,49 @@ public class AddActivity extends AppCompatActivity {
         imagePickerLauncher.launch(intent);
     }
 
+    // פונקציה לפתיחת המצלמה
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Toast.makeText(this, "שגיאה ביצירת קובץ התמונה", Toast.LENGTH_SHORT).show();
+            }
+
+            if (photoFile != null) {
+                Uri photoURI = Uri.fromFile(photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                cameraLauncher.launch(takePictureIntent);
+            }
+        }
+    }
+
+    // פונקציה ליצירת קובץ תמונה
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        );
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openImagePicker();
+                if (permissions[0].equals(Manifest.permission.CAMERA)) {
+                    openCamera();
+                } else {
+                    openImagePicker();
+                }
             } else {
                 Toast.makeText(this, "Permission denied. Cannot select image.", Toast.LENGTH_SHORT).show();
             }
