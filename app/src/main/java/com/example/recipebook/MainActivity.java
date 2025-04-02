@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnR
         recyclerView.setAdapter(adapter);
 
         // הגדרת כפתור הוספת מתכון חדש
-        FloatingActionButton addButton = findViewById(R.id.addButton);
+        FloatingActionButton addButton = findViewById(R.id.addRecipeBtn);
         addButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
             startActivityForResult(intent, 1);

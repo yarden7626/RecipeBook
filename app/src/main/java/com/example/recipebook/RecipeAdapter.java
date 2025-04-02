@@ -45,7 +45,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     @NonNull
     @Override
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recipe_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_recipe, parent, false);
         return new RecipeViewHolder(view);
     }
 
@@ -53,8 +53,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Recipe recipe = recipeList.get(position);
         holder.recipeName.setText(recipe.getRecipeName());
-        holder.recipeCategory.setText(recipe.getCategory());
-        holder.recipeTime.setText(recipe.getPrepTime());
 
         // בדיקה האם המתכון נמצא במועדפים של המשתמש הנוכחי
         boolean isFavorite = false;
@@ -68,7 +66,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         // עדכון אייקון המועדפים
         holder.favoriteIcon.setImageResource(isFavorite ? 
-            R.drawable.ic_favorite_active : R.drawable.ic_favorite_inactive);
+            R.drawable.ic_star_filled : R.drawable.ic_star_empty);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
@@ -83,14 +81,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     }
 
     static class RecipeViewHolder extends RecyclerView.ViewHolder {
-        TextView recipeName, recipeCategory, recipeTime;
+        TextView recipeName;
         ImageView favoriteIcon;
 
         RecipeViewHolder(@NonNull View itemView) {
             super(itemView);
-            recipeName = itemView.findViewById(R.id.recipeName);
-            recipeCategory = itemView.findViewById(R.id.recipeCategory);
-            recipeTime = itemView.findViewById(R.id.recipeTime);
+            recipeName = itemView.findViewById(R.id.RecipeName);
             favoriteIcon = itemView.findViewById(R.id.favoriteIcon);
         }
     }
