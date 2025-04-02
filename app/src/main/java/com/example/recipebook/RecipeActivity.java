@@ -16,6 +16,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.os.CountDownTimer;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 public class RecipeActivity extends AppCompatActivity {
 
@@ -30,11 +32,21 @@ public class RecipeActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private boolean isTimerRunning = false;
     private long timeLeftInMillis = 0;
+    private String currentUserId;
+    private boolean isFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
+
+        // קבלת ה-ID של המשתמש והמתכון
+        currentUserId = getIntent().getStringExtra("user_id");
+        int recipeId = getIntent().getIntExtra("recipe_id", -1);
+        if (currentUserId == null || recipeId == -1) {
+            Toast.makeText(this, "Error: Missing data", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         // אתחול בסיס הנתונים
         database = AppDatabase.getInstance(this);
@@ -50,34 +62,21 @@ public class RecipeActivity extends AppCompatActivity {
         timerButton = findViewById(R.id.timerButton);
         backButtonRecipe = findViewById(R.id.backButtonRecipe);
 
-        // קבלת מזהה המתכון מהמסך הקודם
-        int recipeId = getIntent().getIntExtra("recipe_id", -1);
-        if (recipeId != -1) {
-            // טעינת המתכון מבסיס הנתונים
-            new Thread(() -> {
-                currentRecipe = database.recipeDao().getRecipeById(recipeId);
-                if (currentRecipe != null) {
-                    // עדכון הממשק עם נתוני המתכון
-                    runOnUiThread(() -> {
-                        updateUI();
-                    });
-                }
-            }).start();
-        }
+        // טעינת המתכון
+        new Thread(() -> {
+            currentRecipe = database.recipeDao().getRecipeById(recipeId);
+            if (currentRecipe != null) {
+                // עדכון הממשק עם נתוני המתכון
+                runOnUiThread(() -> {
+                    updateUI();
+                });
+            }
+        }).start();
 
         // הגדרת מאזיני לחיצה לכפתורים
         backButtonRecipe.setOnClickListener(v -> finish());
 
-        isFavRecipe.setOnClickListener(v -> {
-            if (currentRecipe != null) {
-                currentRecipe.setFavorite(!currentRecipe.getIsFavorite());
-                updateFavoriteIcon();
-                // שמירת השינוי בבסיס הנתונים
-                new Thread(() -> {
-                    database.recipeDao().update(currentRecipe);
-                }).start();
-            }
-        });
+        isFavRecipe.setOnClickListener(v -> toggleFavorite());
 
         timerButton.setOnClickListener(v -> {
             if (currentRecipe != null && currentRecipe.getTimerDuration() > 0) {
@@ -131,7 +130,7 @@ public class RecipeActivity extends AppCompatActivity {
 
     // פונקציה לעדכון אייקון המועדפים
     private void updateFavoriteIcon() {
-        if (currentRecipe.getIsFavorite()) {
+        if (isFavorite) {
             isFavRecipe.setImageResource(R.drawable.ic_star_filled);
         } else {
             isFavRecipe.setImageResource(R.drawable.ic_star_empty);
@@ -191,5 +190,25 @@ public class RecipeActivity extends AppCompatActivity {
         if (timeLeftInMillis > 0 && !isTimerRunning) {
             startTimer();
         }
+    }
+
+    private void toggleFavorite() {
+        new Thread(() -> {
+            if (isFavorite) {
+                // הסרת המתכון מהמועדפים
+                database.favoriteRecipeDao().deleteFavorite(currentUserId, currentRecipe.getRecipeId());
+            } else {
+                // הוספת המתכון למועדפים
+                FavoriteRecipe favorite = new FavoriteRecipe(currentUserId, currentRecipe.getRecipeId());
+                database.favoriteRecipeDao().insert(favorite);
+            }
+            isFavorite = !isFavorite;
+            runOnUiThread(() -> {
+                updateFavoriteIcon();
+                Toast.makeText(this, 
+                    isFavorite ? "Added to favorites" : "Removed from favorites", 
+                    Toast.LENGTH_SHORT).show();
+            });
+        }).start();
     }
 }

@@ -11,9 +11,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.lifecycle.Observer;
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnRecipeClickListener {
 
     // הגדרת משתנים גלובליים
     private RecyclerView recyclerView; // תצוגת רשימת המתכונים
@@ -23,11 +24,19 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton backButtonList; // כפתור חזרה
     private FloatingActionButton filterButton; // כפתור סינון
     private TextView titleText; // כותרת המסך
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // קבלת ה-ID של המשתמש המחובר
+        currentUserId = getIntent().getStringExtra("user_id");
+        if (currentUserId == null) {
+            Toast.makeText(this, "Error: User not logged in", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         // אתחול בסיס הנתונים
         database = AppDatabase.getInstance(this);
@@ -41,14 +50,12 @@ public class MainActivity extends AppCompatActivity {
 
         // הגדרת ה-RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new RecipeAdapter(this);
+        adapter = new RecipeAdapter(this, this, currentUserId);
         recyclerView.setAdapter(adapter);
 
-        // טעינת המתכונים מבסיס הנתונים
-        loadRecipes();
-
-        // הגדרת מאזיני לחיצה לכפתורים
-        addRecipeBtn.setOnClickListener(v -> {
+        // הגדרת כפתור הוספת מתכון חדש
+        FloatingActionButton addButton = findViewById(R.id.addButton);
+        addButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
             startActivityForResult(intent, 1);
         });
@@ -64,21 +71,35 @@ public class MainActivity extends AppCompatActivity {
             // TODO: להוסיף פונקציונליות סינון
             Toast.makeText(this, "Filter functionality coming soon", Toast.LENGTH_SHORT).show();
         });
+
+        // טעינת המתכונים והמועדפים
+        loadRecipesAndFavorites();
     }
 
-    // פונקציה לטעינת המתכונים מבסיס הנתונים
-    private void loadRecipes() {
+    private void loadRecipesAndFavorites() {
+        // טעינת כל המתכונים
         database.recipeDao().getAllRecipes().observe(this, recipes -> {
             adapter.setRecipes(recipes);
         });
+
+        // טעינת המועדפים של המשתמש הנוכחי
+        database.favoriteRecipeDao().getFavoritesByUserId(currentUserId).observe(this, favorites -> {
+            adapter.setFavoriteRecipes(favorites);
+        });
+    }
+
+    @Override
+    public void onRecipeClick(Recipe recipe) {
+        Intent intent = new Intent(this, RecipeActivity.class);
+        intent.putExtra("recipe_id", recipe.getRecipeId());
+        intent.putExtra("user_id", currentUserId);
+        startActivity(intent);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            // מתכון חדש נוסף - רענון הרשימה
-            loadRecipes();
             Toast.makeText(this, "Recipe added successfully", Toast.LENGTH_SHORT).show();
         }
     }
@@ -87,6 +108,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // רענון רשימת המתכונים בכל חזרה למסך
-        loadRecipes();
+        loadRecipesAndFavorites();
     }
 }
