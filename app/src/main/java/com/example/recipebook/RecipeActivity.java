@@ -18,6 +18,8 @@ import android.graphics.ImageDecoder;
 import android.os.CountDownTimer;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import java.util.List;
+import java.lang.StringBuilder;
 
 public class RecipeActivity extends AppCompatActivity {
 
@@ -32,7 +34,7 @@ public class RecipeActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private boolean isTimerRunning = false;
     private long timeLeftInMillis = 0;
-    private String currentUserId;
+    private int currentUserId;
     private boolean isFavorite;
 
     @Override
@@ -41,9 +43,9 @@ public class RecipeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recipe);
 
         // קבלת ה-ID של המשתמש והמתכון
-        currentUserId = getIntent().getStringExtra("user_id");
+        currentUserId = getIntent().getIntExtra("user_id", -1);
         int recipeId = getIntent().getIntExtra("recipe_id", -1);
-        if (currentUserId == null || recipeId == -1) {
+        if (currentUserId == -1 || recipeId == -1) {
             Toast.makeText(this, "Error: Missing data", Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -96,7 +98,18 @@ public class RecipeActivity extends AppCompatActivity {
         recipeTitle.setText(currentRecipe.getRecipeName());
         cateRecipeValue.setText(currentRecipe.getCategory());
         pTimeValue.setText(currentRecipe.getPrepTime());
-        ingrValue.setText(currentRecipe.getIngredients());
+        
+        // המרת רשימת הרכיבים למחרוזת מפורמטת
+        List<String> ingredients = currentRecipe.getIngredients();
+        StringBuilder ingredientsText = new StringBuilder();
+        for (int i = 0; i < ingredients.size(); i++) {
+            ingredientsText.append("• ").append(ingredients.get(i));
+            if (i < ingredients.size() - 1) {
+                ingredientsText.append("\n");
+            }
+        }
+        ingrValue.setText(ingredientsText.toString());
+        
         direValue.setText(currentRecipe.getDirections());
         updateFavoriteIcon();
 
@@ -183,7 +196,7 @@ public class RecipeActivity extends AppCompatActivity {
             stopTimer();
         }
     }
-
+;
     @Override
     protected void onResume() {
         super.onResume();

@@ -36,6 +36,7 @@ import java.util.Locale;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.TimePickerDialog;
+import java.util.Arrays;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -346,51 +347,42 @@ public class AddActivity extends AppCompatActivity {
 
     // פונקציה לשמירת המתכון
     private void saveRecipe() {
-        // קבלת ערכים משדות הקלט
         String name = editRecipeName.getText().toString().trim();
-        String time = editPreparationTime.getText().toString().trim();
-        String ingredients = editIngredients.getText().toString().trim();
-        String instructions = editDirections.getText().toString().trim();
         String category = categorySpinner.getSelectedItem().toString();
+        String prepTime = editPreparationTime.getText().toString().trim();
+        String directions = editDirections.getText().toString().trim();
+        String ingredientsText = editIngredients.getText().toString().trim();
+        int userId = getIntent().getIntExtra("user_id", -1);
 
-        // בדיקת תקינות הקלט
-        if (name.isEmpty() || time.isEmpty() || ingredients.isEmpty() || instructions.isEmpty()) {
+        if (userId == -1) {
+            Toast.makeText(this, "Error: User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (name.isEmpty() || category.isEmpty() || prepTime.isEmpty() || 
+            directions.isEmpty() || ingredientsText.isEmpty()) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // שמירת ה-URI של התמונה
-        String imageUriString = "";
-        if (imageUri != null) {
-            imageUriString = imageUri.toString();
-            Log.d(TAG, "Saving image URI: " + imageUriString);
-        }
+        // המרת מחרוזת הרכיבים לרשימה
+        List<String> ingredients = Arrays.asList(ingredientsText.split("\\n"));
 
-        // יצירת אובייקט מתכון חדש עם כל הפרמטרים הנדרשים
-        Recipe recipe = new Recipe(
-                name,           // recipeName
-                category,       // category
-                time,          // prepTime
-                instructions,  // directions
-                imageUriString,  // image
-                false,         // isFavorite
-                ingredients,   // ingredients
-                "1",          // userId (משתמש קבוע כרגע)
-                timerDuration // timerDuration
-        );
+        Recipe recipe = new Recipe(name, category, prepTime, directions, 
+                                 imageUri.toString(), false, ingredients, userId, 0);
 
-
-        // שמירת המתכון בבסיס הנתונים
         new Thread(() -> {
-            database.recipeDao().insert(recipe);
-            runOnUiThread(() -> {
-                Toast.makeText(AddActivity.this, "Recipe saved successfully", Toast.LENGTH_SHORT).show();
-                // החזרת המתכון החדש למסך הראשי
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("recipeId", recipe.getRecipeId());
-                setResult(RESULT_OK, resultIntent);
-                finish();
-            });
+            try {
+                database.recipeDao().insert(recipe);
+                runOnUiThread(() -> {
+                    Toast.makeText(AddActivity.this, "Recipe saved successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> 
+                    Toast.makeText(AddActivity.this, "Error saving recipe: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
+            }
         }).start();
     }
 }

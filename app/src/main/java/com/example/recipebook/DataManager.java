@@ -21,9 +21,8 @@ public class DataManager {
         return appDatabase.recipeDao().getRecipeById(index);
     }
 
-    public LiveData<List<Recipe>> getRecipeListInfo(String userID) {
-        // מחזירה את כל המתכונים
-        return appDatabase.recipeDao().getAllRecipes();
+    public LiveData<List<Recipe>> getAllRecipes(int userId) {
+        return appDatabase.recipeDao().getAllRecipes(userId);
     }
 
     public void upDateRecipe(Recipe recipe) {

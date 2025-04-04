@@ -17,11 +17,11 @@ public interface FavoriteRecipeDao {
     void delete(FavoriteRecipe favoriteRecipe);
 
     @Query("SELECT * FROM favorite_recipes WHERE userId = :userId")
-    LiveData<List<FavoriteRecipe>> getFavoritesByUserId(String userId);
+    LiveData<List<FavoriteRecipe>> getFavoritesByUserId(int userId);
 
     @Query("SELECT * FROM favorite_recipes WHERE userId = :userId AND recipeId = :recipeId")
-    FavoriteRecipe getFavorite(String userId, int recipeId);
+    FavoriteRecipe getFavorite(int userId, int recipeId);
 
     @Query("DELETE FROM favorite_recipes WHERE userId = :userId AND recipeId = :recipeId")
-    void deleteFavorite(String userId, int recipeId);
+    void deleteFavorite(int userId, int recipeId);
 } 

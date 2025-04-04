@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnR
     private ImageButton backButtonList; // כפתור חזרה
     private FloatingActionButton filterButton; // כפתור סינון
     private TextView titleText; // כותרת המסך
-    private String currentUserId;
+    private int currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +32,12 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnR
         setContentView(R.layout.activity_main);
 
         // קבלת ה-ID של המשתמש המחובר
-        currentUserId = getIntent().getStringExtra("user_id");
-        if (currentUserId == null) {
-            Toast.makeText(this, "Error: User not logged in", Toast.LENGTH_SHORT).show();
+        currentUserId = getIntent().getIntExtra("user_id", -1);
+        if (currentUserId == -1) {
+            // אם אין user_id, נחזור למסך הכניסה
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
+            return;
         }
 
         // אתחול בסיס הנתונים
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnR
         FloatingActionButton addButton = findViewById(R.id.addRecipeBtn);
         addButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
+            intent.putExtra("user_id", currentUserId);
             startActivityForResult(intent, 1);
         });
 
@@ -77,8 +80,9 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnR
     }
 
     private void loadRecipesAndFavorites() {
-        // טעינת כל המתכונים
-        database.recipeDao().getAllRecipes().observe(this, recipes -> {
+        // טעינת המתכונים של המשתמש הנוכחי
+        DataManager dataManager = new DataManager(this);
+        dataManager.getAllRecipes(currentUserId).observe(this, recipes -> {
             adapter.setRecipes(recipes);
         });
 

@@ -5,45 +5,51 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "favorite_recipes",
-        foreignKeys = {
-            @ForeignKey(entity = User.class,
-                    parentColumns = "id",
-                    childColumns = "userId",
-                    onDelete = ForeignKey.CASCADE),
-            @ForeignKey(entity = Recipe.class,
-                    parentColumns = "recipeId",
-                    childColumns = "recipeId",
-                    onDelete = ForeignKey.CASCADE)
-        },
-        indices = {
-            @Index("userId"),
-            @Index("recipeId")
-        })
+@Entity(
+    tableName = "favorite_recipes",
+    foreignKeys = {
+        @ForeignKey(
+            entity = User.class,
+            parentColumns = "id",
+            childColumns = "userId",
+            onDelete = ForeignKey.CASCADE
+        ),
+        @ForeignKey(
+            entity = Recipe.class,
+            parentColumns = "recipeId",
+            childColumns = "recipeId",
+            onDelete = ForeignKey.CASCADE
+        )
+    },
+    indices = {
+        @Index("userId"),
+        @Index("recipeId")
+    }
+)
 public class FavoriteRecipe {
     @PrimaryKey(autoGenerate = true)
-    private int favoriteId;
-    private String userId;
+    private int id;
+    private int userId;
     private int recipeId;
 
-    public FavoriteRecipe(String userId, int recipeId) {
+    public FavoriteRecipe(int userId, int recipeId) {
         this.userId = userId;
         this.recipeId = recipeId;
     }
 
-    public int getFavoriteId() {
-        return favoriteId;
+    public int getId() {
+        return id;
     }
 
-    public void setFavoriteId(int favoriteId) {
-        this.favoriteId = favoriteId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

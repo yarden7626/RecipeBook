@@ -21,12 +21,12 @@ public interface RecipeDao {
     @Delete //מוחק מתכון מהדאטה בייס
     void delete(Recipe recipe);
 
-    @Query("SELECT * FROM recipes") //מחזיר רשימה של כל המתכונים בטבלה
-    LiveData<List<Recipe>> getAllRecipes();
+    @Query("SELECT * FROM recipes WHERE userId = :userId") //מחזיר רשימה של כל המתכונים בטבלה לפי האיידי שהתקבל
+    LiveData<List<Recipe>> getAllRecipes(int userId);
 
     @Query("SELECT * FROM recipes WHERE recipeId = :recipeId") //מחזיר מתכון ספציפי לפי האיידי שהתקבל
     Recipe getRecipeById(int recipeId);
 
-    @Query("SELECT * FROM recipes WHERE category = :category") //מחזיר רשימה של כל המתכונים בטבלה לפי הקטגוריה שהתקבלה
-    LiveData<List<Recipe>> getRecipesByCategory(String category);
+    @Query("SELECT * FROM recipes WHERE userId = :userId AND category = :category") //מחזיר רשימה של כל המתכונים בטבלה לפי האיידי והקטגוריה שהתקבלה
+    LiveData<List<Recipe>> getRecipesByCategory(int userId, String category);
 }

@@ -3,8 +3,11 @@ package com.example.recipebook;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.Ignore;
+import androidx.room.TypeConverters;
+import java.util.List;
 
 @Entity(tableName = "recipes")
+@TypeConverters({Converters.class})
 public class Recipe {
 
     @PrimaryKey(autoGenerate = true)
@@ -15,13 +18,13 @@ public class Recipe {
     private String directions; // הוראות הכנה
     private String imageUri; // תמונה של המתכון
     private boolean isFavorite; // האם המתכון במועדפים
-    private String ingredients; // רשימה של רכיבים במתכון
-    private String userId; // מספר זיהוי של המשתמש
+    private List<String> ingredients; // רשימה של רכיבים במתכון
+    private int userId; // מספר זיהוי של המשתמש
     private int timerDuration; // זמן הטיימר בדקות
 
     // פעולה בונה
     @Ignore
-    public Recipe(String recipeName, String category, String prepTime, String directions, String imageUri, boolean isFavorite, String ingredients, String userId, int timerDuration) {
+    public Recipe(String recipeName, String category, String prepTime, String directions, String imageUri, boolean isFavorite, List<String> ingredients, int userId, int timerDuration) {
         this.recipeName = recipeName;
         this.category = category;
         this.prepTime = prepTime;
@@ -41,8 +44,8 @@ public class Recipe {
         this.directions = "";
         this.imageUri = "";
         this.isFavorite = false;
-        this.ingredients = "";
-        this.userId = "";
+        this.ingredients = null;
+        this.userId = 0;
         this.timerDuration = 0;
     }
 
@@ -102,19 +105,19 @@ public class Recipe {
         isFavorite = favorite;
     }
 
-    public String getIngredients() {
+    public List<String> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(String ingredients) {
+    public void setIngredients(List<String> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

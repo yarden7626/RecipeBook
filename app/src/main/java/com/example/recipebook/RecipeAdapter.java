@@ -17,13 +17,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     private List<FavoriteRecipe> favoriteRecipes;
     private Context context;
     private OnRecipeClickListener listener;
-    private String currentUserId;
+    private int currentUserId;
 
     public interface OnRecipeClickListener {
         void onRecipeClick(Recipe recipe);
     }
 
-    public RecipeAdapter(Context context, OnRecipeClickListener listener, String currentUserId) {
+    public RecipeAdapter(Context context, OnRecipeClickListener listener, int currentUserId) {
         this.context = context;
         this.listener = listener;
         this.currentUserId = currentUserId;
@@ -58,7 +58,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         boolean isFavorite = false;
         for (FavoriteRecipe favorite : favoriteRecipes) {
             if (favorite.getRecipeId() == recipe.getRecipeId() && 
-                favorite.getUserId().equals(currentUserId)) {
+                favorite.getUserId() == currentUserId) {
                 isFavorite = true;
                 break;
             }

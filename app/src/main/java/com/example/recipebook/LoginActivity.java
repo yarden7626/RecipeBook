@@ -50,21 +50,30 @@ public class LoginActivity extends AppCompatActivity {
 
         // ביצוע בדיקת התחברות ב-Thread נפרד
         new Thread(() -> {
-            // חיפוש משתמש בבסיס הנתונים
-            User user = database.userDao().login(email, password);
-            
-            // עדכון הממשק בתוצאות הבדיקה
-            runOnUiThread(() -> {
-                if (user != null) {
-                    // התחברות הצליחה - מעבר למסך הראשי
-                    Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish(); // סגירת מסך הכניסה
-                } else {
-                    // התחברות נכשלה - הצגת הודעת שגיאה
-                    Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_LONG).show();
-                }
-            });
+            try {
+                // חיפוש משתמש בבסיס הנתונים
+                User user = database.userDao().login(email, password);
+
+                // עדכון הממשק בתוצאות הבדיקה
+                runOnUiThread(() -> {
+                    if (user != null) {
+                        // התחברות הצליחה - מעבר למסך הראשי
+                        Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("user_id", user.getId());
+                        startActivity(intent);
+                        finish(); // סגירת מסך הכניסה
+                    } else {
+                        // התחברות נכשלה - הצגת הודעת שגיאה
+                        Toast.makeText(LoginActivity.this, "Invalid email or password", Toast.LENGTH_LONG).show();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() ->
+                    Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
+            }
         }).start();
     }
 
@@ -82,26 +91,43 @@ public class LoginActivity extends AppCompatActivity {
 
         // ביצוע הרשמה ב-Thread נפרד
         new Thread(() -> {
-            // בדיקה אם האימייל כבר קיים
-            User existingUser = database.userDao().getUserByEmail(email);
-            if (existingUser != null) {
-                // האימייל כבר קיים - הצגת הודעת שגיאה
-                runOnUiThread(() -> 
-                    Toast.makeText(LoginActivity.this, "Email already exists", Toast.LENGTH_LONG).show()
-                );
-                return;
-            }
+            try {
+                // בדיקה אם האימייל כבר קיים
+                User existingUser = database.userDao().getUserByEmail(email);
+                if (existingUser != null) {
+                    // האימייל כבר קיים - הצגת הודעת שגיאה
+                    runOnUiThread(() ->
+                            Toast.makeText(LoginActivity.this, "Email already exists", Toast.LENGTH_LONG).show()
+                    );
+                    return;
+                }
 
-            // יצירת משתמש חדש ושמירתו בבסיס הנתונים
-            User newUser = new User(email, password);
-            database.userDao().insert(newUser);
-            
-            // הרשמה הצליחה - מעבר למסך הראשי
-            runOnUiThread(() -> {
-                Toast.makeText(LoginActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finish(); // סגירת מסך הכניסה
-            });
+                User newUser = new User(email, password);
+                long userId = database.userDao().insert(newUser);
+
+                // נחכה קצת כדי לוודא שהמשתמש נוצר
+                Thread.sleep(500);
+
+                User registeredUser = database.userDao().getUserByEmail(email);
+                if (registeredUser != null) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(LoginActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("user_id", registeredUser.getId());
+                        startActivity(intent);
+                        finish();
+                    });
+                } else {
+                    runOnUiThread(() ->
+                        Toast.makeText(LoginActivity.this, "Registration failed", Toast.LENGTH_LONG).show()
+                    );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() ->
+                    Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
+            }
         }).start();
     }
 }
