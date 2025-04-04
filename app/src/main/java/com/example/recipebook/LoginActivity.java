@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.util.Patterns;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -36,6 +37,10 @@ public class LoginActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(v -> signUpUser());
     }
 
+    private boolean isValidEmail(String email) {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
     // פונקציה לטיפול בהתחברות משתמש
     private void loginUser() {
         // קבלת ערכים משדות הקלט
@@ -45,6 +50,11 @@ public class LoginActivity extends AppCompatActivity {
         // בדיקת תקינות הקלט
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            Toast.makeText(LoginActivity.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -86,6 +96,11 @@ public class LoginActivity extends AppCompatActivity {
         // בדיקת תקינות הקלט
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            Toast.makeText(LoginActivity.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
             return;
         }
 

@@ -6,7 +6,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-@Database(entities = {User.class, Recipe.class, FavoriteRecipe.class}, version = 1, exportSchema = true)
+@Database(entities = {User.class, Recipe.class, FavoriteRecipe.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
@@ -24,5 +24,12 @@ public abstract class AppDatabase extends RoomDatabase {
                     .build();
         }
         return instance;
+    }
+
+    public static void destroyInstance() {
+        if (instance != null) {
+            instance.close();
+            instance = null;
+        }
     }
 }
