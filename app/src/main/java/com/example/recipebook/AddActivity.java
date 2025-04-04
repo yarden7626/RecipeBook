@@ -352,12 +352,6 @@ public class AddActivity extends AppCompatActivity {
         String prepTime = editPreparationTime.getText().toString().trim();
         String directions = editDirections.getText().toString().trim();
         String ingredientsText = editIngredients.getText().toString().trim();
-        int userId = getIntent().getIntExtra("user_id", -1);
-
-        if (userId == -1) {
-            Toast.makeText(this, "Error: User not logged in", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         if (name.isEmpty() || category.isEmpty() || prepTime.isEmpty() || 
             directions.isEmpty() || ingredientsText.isEmpty()) {
@@ -369,7 +363,7 @@ public class AddActivity extends AppCompatActivity {
         List<String> ingredients = Arrays.asList(ingredientsText.split("\\n"));
 
         Recipe recipe = new Recipe(name, category, prepTime, directions, 
-                                 imageUri.toString(), false, ingredients, userId, 0);
+                                 imageUri.toString(), false, ingredients, 0);
 
         new Thread(() -> {
             try {

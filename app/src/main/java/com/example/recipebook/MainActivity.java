@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,7 +15,7 @@ import androidx.lifecycle.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnRecipeClickListener {
+public class MainActivity extends AppCompatActivity {
 
     // הגדרת משתנים גלובליים
     private RecyclerView recyclerView; // תצוגת רשימת המתכונים
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnR
     private FloatingActionButton filterButton; // כפתור סינון
     private TextView titleText; // כותרת המסך
     private int currentUserId;
+    private DataManager dataManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnR
 
         // אתחול בסיס הנתונים
         database = AppDatabase.getInstance(this);
+        dataManager = DataManager.getInstance(this);
 
         // קישור המשתנים לאלמנטים בממשק המשתמש
         recyclerView = findViewById(R.id.rv_recipes);
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnR
 
         // הגדרת ה-RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new RecipeAdapter(this, this, currentUserId);
+        adapter = new RecipeAdapter(this, this::onRecipeClick, currentUserId);
         recyclerView.setAdapter(adapter);
 
         // הגדרת כפתור הוספת מתכון חדש
@@ -76,24 +79,33 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnR
         });
 
         // טעינת המתכונים והמועדפים
-        loadRecipesAndFavorites();
+        loadRecipes();
     }
 
-    private void loadRecipesAndFavorites() {
-        // טעינת המתכונים של המשתמש הנוכחי
-        DataManager dataManager = new DataManager(this);
-        dataManager.getAllRecipes(currentUserId).observe(this, recipes -> {
+    private void loadRecipes() {
+        // טעינת המתכונים
+        dataManager.getAllRecipes().observe(this, recipes -> {
             adapter.setRecipes(recipes);
         });
 
-        // טעינת המועדפים של המשתמש הנוכחי
-        database.favoriteRecipeDao().getFavoritesByUserId(currentUserId).observe(this, favorites -> {
-            adapter.setFavoriteRecipes(favorites);
+        // טעינת המועדפים
+        dataManager.getFavoritesByUserId(currentUserId).observe(this, favorites -> {
+            // עדכון סטטוס המועדפים בכל מתכון
+            for (Recipe recipe : adapter.getRecipes()) {
+                boolean isFavorite = false;
+                for (FavoriteRecipe favorite : favorites) {
+                    if (favorite.getRecipeId() == recipe.getRecipeId()) {
+                        isFavorite = true;
+                        break;
+                    }
+                }
+                recipe.setFavorite(isFavorite);
+            }
+            adapter.notifyDataSetChanged();
         });
     }
 
-    @Override
-    public void onRecipeClick(Recipe recipe) {
+    private void onRecipeClick(Recipe recipe) {
         Intent intent = new Intent(this, RecipeActivity.class);
         intent.putExtra("recipe_id", recipe.getRecipeId());
         intent.putExtra("user_id", currentUserId);
@@ -112,6 +124,6 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnR
     protected void onResume() {
         super.onResume();
         // רענון רשימת המתכונים בכל חזרה למסך
-        loadRecipesAndFavorites();
+        loadRecipes();
     }
 }
