@@ -20,6 +20,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import java.util.List;
 import java.lang.StringBuilder;
+import android.widget.EditText;
+import androidx.appcompat.app.AlertDialog;
+import android.text.InputType;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.Manifest;
 
 public class RecipeActivity extends AppCompatActivity {
 
@@ -37,6 +47,7 @@ public class RecipeActivity extends AppCompatActivity {
     private int currentUserId;
     private boolean isFavorite;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +59,7 @@ public class RecipeActivity extends AppCompatActivity {
         if (currentUserId == -1 || recipeId == -1) {
             Toast.makeText(this, "Error: Missing data", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
         // אתחול בסיס הנתונים
@@ -64,6 +76,9 @@ public class RecipeActivity extends AppCompatActivity {
         timerButton = findViewById(R.id.timerButton);
         backButtonRecipe = findViewById(R.id.backButtonRecipe);
 
+        // רישום BroadcastReceiver לבקשת הרשאות
+        registerReceiver(permissionReceiver, new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION"));
+
         // טעינת המתכון והסטטוס של המועדפים
         new Thread(() -> {
             currentRecipe = database.recipeDao().getRecipeById(recipeId);
@@ -76,6 +91,11 @@ public class RecipeActivity extends AppCompatActivity {
                 // עדכון הממשק עם נתוני המתכון
                 runOnUiThread(() -> {
                     updateUI();
+                    // בדיקה אם יש טיימר מוגדר
+                    if (currentRecipe.getTimerDuration() > 0) {
+                        timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000;
+                        updateTimerUI();
+                    }
                 });
             }
         }).start();
@@ -88,15 +108,33 @@ public class RecipeActivity extends AppCompatActivity {
         timerButton.setOnClickListener(v -> {
             if (currentRecipe != null && currentRecipe.getTimerDuration() > 0) {
                 if (isTimerRunning) {
-                    stopTimer();
+                    showStopTimerDialog();
                 } else {
-                    startTimer();
+                    showTimerConfirmationDialog();
                 }
             } else {
-                Toast.makeText(this, "No timer set for this recipe", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No timer is set for this recipe", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // הוספת כפתור לאתחול מחדש של הטיימר
+        timerButton.setOnLongClickListener(v -> {
+            if (currentRecipe != null && currentRecipe.getTimerDuration() > 0) {
+                resetTimer();
+                return true;
+            }
+            return false;
+        });
     }
+
+    private final BroadcastReceiver permissionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+            }
+        }
+    };
 
     // פונקציה לעדכון הממשק עם נתוני המתכון
     private void updateUI() {
@@ -155,36 +193,71 @@ public class RecipeActivity extends AppCompatActivity {
         }
     }
 
+    private void showTimerConfirmationDialog() {
+        int minutes = currentRecipe.getTimerDuration();
+        String timeText = String.format("%02d:%02d", minutes / 60, minutes % 60);
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Start Timer")
+               .setMessage("Timer is set to " + timeText + "\nDo you want to start it?")
+               .setPositiveButton("Start", (dialog, which) -> startTimer())
+               .setNegativeButton("Cancel", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.black));
+        });
+        dialog.show();
+    }
+
+    private void showStopTimerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Stop Timer")
+               .setMessage("Are you sure you want to stop the timer?")
+               .setPositiveButton("Stop", (dialog, which) -> stopTimer())
+               .setNegativeButton("Cancel", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.black));
+        });
+        dialog.show();
+    }
+
     private void startTimer() {
-        if (timeLeftInMillis == 0) {
-            timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000; // המרה לדקות
+        if (!isTimerRunning) {
+            isTimerRunning = true;
+            timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000;
+            
+            // הפעלת הטיימר כ-Service
+            Intent serviceIntent = new Intent(this, TimerService.class);
+            serviceIntent.putExtra("time_left", timeLeftInMillis);
+            serviceIntent.putExtra("recipe_id", currentRecipe.getRecipeId());
+            startService(serviceIntent);
+            
+            timerButton.setImageResource(R.drawable.timer_icon_active);
         }
-
-        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                timeLeftInMillis = millisUntilFinished;
-                updateTimerUI();
-            }
-
-            @Override
-            public void onFinish() {
-                isTimerRunning = false;
-                timerButton.setImageResource(R.drawable.timer_icon_active);
-                Toast.makeText(RecipeActivity.this, "Timer finished!", Toast.LENGTH_SHORT).show();
-            }
-        }.start();
-
-        isTimerRunning = true;
-        timerButton.setImageResource(R.drawable.timer_icon_active);
     }
 
     private void stopTimer() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
+        if (isTimerRunning) {
             isTimerRunning = false;
+            // עצירת ה-Service
+            Intent serviceIntent = new Intent(this, TimerService.class);
+            stopService(serviceIntent);
+            
             timerButton.setImageResource(R.drawable.timer_icon_active);
+            timeLeftInMillis = 0;
+            updateTimerUI();
         }
+    }
+
+    private void resetTimer() {
+        stopTimer();
+        timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000;
+        updateTimerUI();
     }
 
     private void updateTimerUI() {
@@ -197,18 +270,41 @@ public class RecipeActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (isTimerRunning) {
-            stopTimer();
-        }
+        // לא עוצרים את הטיימר כשעוזבים את המסך
     }
-;
+
     @Override
     protected void onResume() {
         super.onResume();
-        if (timeLeftInMillis > 0 && !isTimerRunning) {
-            startTimer();
+        // בדיקה אם הטיימר רץ
+        if (isTimerRunning) {
+            // קבלת הזמן הנותר מה-Service
+            Intent serviceIntent = new Intent(this, TimerService.class);
+            bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (serviceConnection != null) {
+            unbindService(serviceConnection);
+        }
+        unregisterReceiver(permissionReceiver);
+    }
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            TimerService.TimerBinder binder = (TimerService.TimerBinder) service;
+            timeLeftInMillis = binder.getTimeLeft();
+            updateTimerUI();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
 
     private void toggleFavorite() {
         new Thread(() -> {

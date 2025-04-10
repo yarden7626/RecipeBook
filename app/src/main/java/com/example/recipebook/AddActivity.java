@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import android.app.TimePickerDialog;
 import java.util.Arrays;
+import android.app.AlertDialog;
+import android.text.InputType;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -171,7 +173,7 @@ public class AddActivity extends AppCompatActivity {
         categoryButton.setOnClickListener(v -> categorySpinner.performClick());
 
         // הגדרת מאזיני לחיצה לכפתור טיימר
-        AddTimer.setOnClickListener(v -> showTimerDialog()); // הוספתי את הכפתור AddTimer לדיאלוג טיימר
+        AddTimer.setOnClickListener(v -> showTimerDialog());
         timerButton.setOnClickListener(v -> showTimerDialog());
     }
 
@@ -334,7 +336,7 @@ public class AddActivity extends AppCompatActivity {
                     timerDuration = (hourOfDay * 60) + minute;
                     if (timerDuration > 0) {
                         String timeText = String.format("%02d:%02d", hourOfDay, minute);
-                        Toast.makeText(this, "Timer set to " + timeText, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Timer set to " + timeText + " and saved", Toast.LENGTH_SHORT).show();
                     }
                 },
                 0, // שעה התחלתית
@@ -365,8 +367,9 @@ public class AddActivity extends AppCompatActivity {
         // בדיקה אם נבחרה תמונה
         String imagePath = (imageUri != null) ? imageUri.toString() : "android.resource://com.example.recipebook/drawable/plate_icon";
 
+        // יצירת המתכון עם משך הטיימר שנשמר
         Recipe recipe = new Recipe(name, category, prepTime, directions, 
-                                 imagePath, false, ingredients, 0);
+                                 imagePath, false, ingredients, timerDuration);
 
         new Thread(() -> {
             try {
