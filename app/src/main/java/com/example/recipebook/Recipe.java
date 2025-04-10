@@ -28,7 +28,7 @@ public class Recipe {
         this.category = category;
         this.prepTime = prepTime;
         this.directions = directions;
-        this.imageUri = imageUri;
+        this.imageUri = (imageUri == null || imageUri.isEmpty()) ? "android.resource://com.example.recipebook/drawable/plate_icon" : imageUri;
         this.isFavorite = isFavorite;
         this.ingredients = ingredients;
         this.timerDuration = timerDuration;
@@ -40,7 +40,7 @@ public class Recipe {
         this.category = "";
         this.prepTime = "";
         this.directions = "";
-        this.imageUri = "";
+        this.imageUri = "android.resource://com.example.recipebook/drawable/plate_icon";
         this.isFavorite = false;
         this.ingredients = null;
         this.timerDuration = 0;

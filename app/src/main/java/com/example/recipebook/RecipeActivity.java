@@ -64,10 +64,15 @@ public class RecipeActivity extends AppCompatActivity {
         timerButton = findViewById(R.id.timerButton);
         backButtonRecipe = findViewById(R.id.backButtonRecipe);
 
-        // טעינת המתכון
+        // טעינת המתכון והסטטוס של המועדפים
         new Thread(() -> {
             currentRecipe = database.recipeDao().getRecipeById(recipeId);
             if (currentRecipe != null) {
+                // בדיקת סטטוס המועדפים
+                FavoriteRecipe favorite = database.favoriteRecipeDao().getFavorite(currentUserId, recipeId);
+                isFavorite = (favorite != null);
+                currentRecipe.setFavorite(isFavorite);
+                
                 // עדכון הממשק עם נתוני המתכון
                 runOnUiThread(() -> {
                     updateUI();
@@ -216,6 +221,8 @@ public class RecipeActivity extends AppCompatActivity {
                 database.favoriteRecipeDao().insert(favorite);
             }
             isFavorite = !isFavorite;
+            currentRecipe.setFavorite(isFavorite);
+            
             runOnUiThread(() -> {
                 updateFavoriteIcon();
                 Toast.makeText(this, 

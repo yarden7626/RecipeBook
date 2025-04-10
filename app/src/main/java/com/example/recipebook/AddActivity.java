@@ -362,8 +362,11 @@ public class AddActivity extends AppCompatActivity {
         // המרת מחרוזת הרכיבים לרשימה
         List<String> ingredients = Arrays.asList(ingredientsText.split("\\n"));
 
+        // בדיקה אם נבחרה תמונה
+        String imagePath = (imageUri != null) ? imageUri.toString() : "android.resource://com.example.recipebook/drawable/plate_icon";
+
         Recipe recipe = new Recipe(name, category, prepTime, directions, 
-                                 imageUri.toString(), false, ingredients, 0);
+                                 imagePath, false, ingredients, 0);
 
         new Thread(() -> {
             try {
