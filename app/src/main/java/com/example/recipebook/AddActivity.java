@@ -59,43 +59,39 @@ public class AddActivity extends AppCompatActivity {
     private int timerDuration = 0; // זמן הטיימר בדקות
     private String currentPhotoPath;
 
-    // יצירת Contract חדש לבחירת תמונה
+    // הגדרת ActivityResultLauncher לבחירת תמונה
     private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    imageUri = result.getData().getData();
-                    Log.d(TAG, "Selected image URI: " + imageUri);
-                    try {
-                        // שמירת ה-URI הקבוע של התמונה
-                        final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
-                        getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
-                        Log.d(TAG, "Got persistent permission for URI");
-
-                        // הצגת התמונה בתצוגה המקדימה
-                        Bitmap bitmap;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            Log.d(TAG, "Using ImageDecoder for Android P and above");
-                            bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
-                        } else {
-                            Log.d(TAG, "Using MediaStore for older Android versions");
-                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+        new ActivityResultContracts.StartActivityForResult(),
+        result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                imageUri = result.getData().getData();
+                if (imageUri != null) {
+                    // טעינת התמונה
+                    new Thread(() -> {
+                        try {
+                            Bitmap bitmap;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
+                            } else {
+                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                            }
+                            
+                            // עדכון התמונה ב-ImageView
+                            runOnUiThread(() -> {
+                                addImage.setImageBitmap(bitmap);
+                                addImage.setVisibility(View.VISIBLE);
+                                Log.d(TAG, "Successfully loaded image preview");
+                            });
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error loading image preview", e);
+                            runOnUiThread(() -> {
+                                Toast.makeText(this, "Error loading image preview. Try again", Toast.LENGTH_SHORT).show();
+                            });
                         }
-                        
-                        // עדכון התמונה ב-ImageView
-                        runOnUiThread(() -> {
-                            addImage.setImageBitmap(bitmap);
-                            addImage.setVisibility(View.VISIBLE);
-                            Log.d(TAG, "Successfully loaded image preview");
-                        });
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error loading image preview", e);
-                        runOnUiThread(() -> {
-                            Toast.makeText(this, "Error loading image preview. Try again", Toast.LENGTH_SHORT).show();
-                        });
-                    }
+                    }).start();
                 }
             }
+        }
     );
 
     // יצירת Contract חדש לצילום תמונה
@@ -254,7 +250,7 @@ public class AddActivity extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                Toast.makeText(this, "שגיאה ביצירת קובץ התמונה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error creating image file", Toast.LENGTH_SHORT).show();
             }
 
             if (photoFile != null) {
@@ -344,6 +340,19 @@ public class AddActivity extends AppCompatActivity {
                 true // פורמט 24 שעות
         );
         timePickerDialog.setTitle("Set Timer Duration");
+        
+        // שינוי צבע הכפתורים לשחור
+        timePickerDialog.setOnShowListener(dialogInterface -> {
+            Button positiveButton = timePickerDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            Button negativeButton = timePickerDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            if (positiveButton != null) {
+                positiveButton.setTextColor(getResources().getColor(android.R.color.black));
+            }
+            if (negativeButton != null) {
+                negativeButton.setTextColor(getResources().getColor(android.R.color.black));
+            }
+        });
+        
         timePickerDialog.show();
     }
 
