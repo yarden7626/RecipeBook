@@ -30,6 +30,7 @@ import android.os.IBinder;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.Manifest;
+import java.util.Locale;
 
 public class RecipeActivity extends AppCompatActivity {
 
@@ -46,6 +47,8 @@ public class RecipeActivity extends AppCompatActivity {
     private long timeLeftInMillis = 0;
     private int currentUserId;
     private boolean isFavorite;
+    private TimerService timerService;
+    private boolean hasShownInitialDialog = false;
 
 
     @Override
@@ -110,7 +113,14 @@ public class RecipeActivity extends AppCompatActivity {
                 if (isTimerRunning) {
                     showStopTimerDialog();
                 } else {
-                    showTimerConfirmationDialog();
+                    if (!hasShownInitialDialog) {
+                        showInitialTimerDialog();
+                        hasShownInitialDialog = true;
+                    } else if (timeLeftInMillis > 0) {
+                        showResumeTimerDialog();
+                    } else {
+                        showInitialTimerDialog();
+                    }
                 }
             } else {
                 Toast.makeText(this, "No timer is set for this recipe", Toast.LENGTH_SHORT).show();
@@ -193,15 +203,15 @@ public class RecipeActivity extends AppCompatActivity {
         }
     }
 
-    private void showTimerConfirmationDialog() {
+    private void showInitialTimerDialog() {
         int minutes = currentRecipe.getTimerDuration();
-        String timeText = String.format("%02d:%02d", minutes / 60, minutes % 60);
+        String timeText = String.format(Locale.getDefault(), "%02d:%02d", minutes / 60, minutes % 60);
         
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Start Timer")
-               .setMessage("Timer is set to " + timeText + "\nDo you want to start it?")
+               .setMessage("This recipe has a timer set to " + timeText + "\nWould you like to start it?")
                .setPositiveButton("Start", (dialog, which) -> startTimer())
-               .setNegativeButton("Cancel", null);
+               .setNegativeButton("Not Now", null);
 
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialogInterface -> {
@@ -226,46 +236,62 @@ public class RecipeActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void updateTimerUI() {
+    private void showResumeTimerDialog() {
         int minutes = (int) (timeLeftInMillis / 1000) / 60;
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
-        String timeLeftText = String.format("%02d:%02d", minutes, seconds);
+        String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         
-        if (isTimerRunning) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Resume Timer")
+               .setMessage("Timer is paused at " + timeLeftFormatted + "\nDo you want to resume it?")
+               .setPositiveButton("Resume", (dialog, which) -> startTimer())
+               .setNegativeButton("Cancel", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.black));
+        });
+        dialog.show();
+    }
+
+    private void updateTimerUI() {
+        if (timeLeftInMillis > 0) {
+            int minutes = (int) (timeLeftInMillis / 1000) / 60;
+            int seconds = (int) (timeLeftInMillis / 1000) % 60;
+            String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+            timerText.setText(timeLeftFormatted);
             timerText.setVisibility(View.VISIBLE);
-            timerText.setText(timeLeftText);
         } else {
             timerText.setVisibility(View.GONE);
         }
     }
 
     private void startTimer() {
-        if (!isTimerRunning) {
-            isTimerRunning = true;
-            timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000;
-            
-            // הפעלת הטיימר כ-Service
-            Intent serviceIntent = new Intent(this, TimerService.class);
-            serviceIntent.putExtra("time_left", timeLeftInMillis);
-            serviceIntent.putExtra("recipe_id", currentRecipe.getRecipeId());
+        Intent serviceIntent = new Intent(this, TimerService.class);
+        serviceIntent.putExtra("timeLeftInMillis", timeLeftInMillis);
+        try {
             startService(serviceIntent);
-            
-            timerButton.setImageResource(R.drawable.timer_icon_active);
+            bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            isTimerRunning = true;
             updateTimerUI();
+        } catch (SecurityException e) {
+            Toast.makeText(this, "Could not start timer service", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void stopTimer() {
-        if (isTimerRunning) {
-            isTimerRunning = false;
-            // עצירת ה-Service
-            Intent serviceIntent = new Intent(this, TimerService.class);
-            stopService(serviceIntent);
-            
-            timerButton.setImageResource(R.drawable.timer_icon_active);
-            timeLeftInMillis = 0;
-            updateTimerUI();
+        if (timerService != null) {
+            try {
+                unbindService(serviceConnection);
+                stopService(new Intent(this, TimerService.class));
+            } catch (IllegalArgumentException e) {
+                // Service כבר לא מחובר, אפשר להתעלם מהשגיאה
+            }
+            timerService = null;
         }
+        isTimerRunning = false;
+        updateTimerUI();
     }
 
     private void resetTimer() {
@@ -277,25 +303,38 @@ public class RecipeActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // לא עוצרים את הטיימר כשעוזבים את המסך
+        // לא מנתקים את החיבור ל-Service כדי שהטיימר ימשיך לרוץ ברקע
+        // רק מנתקים את ה-BroadcastReceiver
+        unregisterReceiver(permissionReceiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // בדיקה אם הטיימר רץ
+        // רושמים מחדש את ה-BroadcastReceiver
+        registerReceiver(permissionReceiver, new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION"));
+        
+        // אם הטיימר רץ, מתחברים מחדש ל-Service
         if (isTimerRunning) {
-            // קבלת הזמן הנותר מה-Service
             Intent serviceIntent = new Intent(this, TimerService.class);
-            bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            try {
+                bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            } catch (SecurityException e) {
+                Log.e(TAG, "Failed to bind to TimerService", e);
+            }
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (serviceConnection != null) {
-            unbindService(serviceConnection);
+        // מנתקים את החיבור ל-Service רק כשהאקטיביטי נהרס
+        if (serviceConnection != null && timerService != null) {
+            try {
+                unbindService(serviceConnection);
+            } catch (IllegalArgumentException e) {
+                // Service כבר לא מחובר, אפשר להתעלם מהשגיאה
+            }
         }
         unregisterReceiver(permissionReceiver);
     }
@@ -303,13 +342,34 @@ public class RecipeActivity extends AppCompatActivity {
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            TimerService.TimerBinder binder = (TimerService.TimerBinder) service;
-            timeLeftInMillis = binder.getService().getTimeLeft();
-            updateTimerUI();
+            try {
+                TimerService.TimerBinder binder = (TimerService.TimerBinder) service;
+                timerService = binder.getService();
+                timerService.setCallback(new TimerService.TimerCallback() {
+                    @Override
+                    public void onTimerUpdate(long millisUntilFinished) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                timeLeftInMillis = millisUntilFinished;
+                                updateTimerUI();
+                            }
+                        });
+                    }
+                });
+                timeLeftInMillis = timerService.getTimeLeft();
+                isTimerRunning = timerService.isRunning();
+                updateTimerUI();
+            } catch (Exception e) {
+                // אם יש בעיה בהתחברות ל-Service, נעצור את הטיימר
+                isTimerRunning = false;
+                updateTimerUI();
+            }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            timerService = null;
         }
     };
 

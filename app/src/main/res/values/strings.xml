@@ -8,6 +8,7 @@
     <string name="add_new_recipe" />
     <string name="back">Back</string>
     <string name="enter_directions">Enter Directions</string>
+    <string name="timer_button_description">Timer button. Press to start or stop the timer. Long press to reset.</string>
 
     <string-array name="recipe_categories">
         <item>Pasta</item>
@@ -16,7 +17,7 @@
         <item>Soups</item>
         <item>Drinks</item>
         <item>Meat</item>
-        <item>Pastries</item>
+        <item>Baking</item>
         <item>Fish</item>
     </string-array>
 </resources>

@@ -6,191 +6,206 @@
     android:background="@color/backgroundColor"
     tools:context="AddActivity">
 
-    <!-- Title of the Recipe -->
-    <TextView
-        android:id="@+id/RecipeTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:shadowColor="#000000"
-        android:shadowDx="2"
-        android:shadowDy="4"
-        android:shadowRadius="4"
-        android:text="Recipe"
-        android:textColor="#FFFFFF"
-        android:textSize="45sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Form Container -->
-    <LinearLayout
-        android:id="@+id/formContainer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/RecipeTitle">
-
-        <!-- Category -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginBottom="20sp">
-            <TextView
-                android:id="@+id/CategoryRecipe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Category:"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_marginEnd="8dp" />
-            <TextView
-                android:id="@+id/CateRecipeValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="" />
-        </LinearLayout>
-
-        <!-- Preparation Time -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginBottom="20sp">
-            <TextView
-                android:id="@+id/pTimeRecipe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Preparation Time:"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_marginEnd="8dp" />
-            <TextView
-                android:id="@+id/pTimeValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="" />
-        </LinearLayout>
-
-        <!-- Ingredients -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginBottom="20sp">
-            <TextView
-                android:id="@+id/ingrRecipe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ingredients:"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_marginEnd="8dp" />
-            <TextView
-                android:id="@+id/ingrValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="" />
-        </LinearLayout>
-
-        <!-- Directions -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="170dp">
-            <TextView
-                android:id="@+id/direRecipe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Directions:"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_marginEnd="8dp" />
-            <TextView
-                android:id="@+id/direValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="" />
-        </LinearLayout>
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:gravity="center_vertical">
-
-            <!-- Plate Icon -->
-            <ImageView
-                android:id="@+id/imageRecipe"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="2dp"
-                android:src="@drawable/plate_icon" />
-
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <!-- Timer Button  -->
-            <ImageButton
-                android:id="@+id/timerButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="16dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/timer_icon_active"
-                app:layout_constraintEnd_toStartOf="@+id/backButtonRecipe"
-                app:layout_constraintTop_toTopOf="parent" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/timerText"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/timerButton"
-            app:layout_constraintTop_toBottomOf="@+id/timerButton" />
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <!-- Title of the Recipe -->
+            <TextView
+                android:id="@+id/RecipeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="2"
+                android:shadowDy="4"
+                android:shadowRadius="4"
+                android:text="Recipe"
+                android:textColor="#FFFFFF"
+                android:textSize="45sp"
+                android:textStyle="bold" />
 
+            <!-- Form Container -->
+            <LinearLayout
+                android:id="@+id/formContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:orientation="vertical">
+
+                <!-- Category -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20sp">
+                    <TextView
+                        android:id="@+id/CategoryRecipe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Category:"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:layout_marginEnd="8dp" />
+                    <TextView
+                        android:id="@+id/CateRecipeValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="" />
+                </LinearLayout>
+
+                <!-- Preparation Time -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20sp">
+                    <TextView
+                        android:id="@+id/pTimeRecipe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preparation Time:"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:layout_marginEnd="8dp" />
+                    <TextView
+                        android:id="@+id/pTimeValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="" />
+                </LinearLayout>
+
+                <!-- Ingredients -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20sp">
+                    <TextView
+                        android:id="@+id/ingrRecipe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ingredients:"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:layout_marginEnd="8dp" />
+                    <TextView
+                        android:id="@+id/ingrValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="" />
+                </LinearLayout>
+
+                <!-- Directions -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20sp">
+                    <TextView
+                        android:id="@+id/direRecipe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Directions:"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:layout_marginEnd="8dp" />
+                    <TextView
+                        android:id="@+id/direValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="" />
+                </LinearLayout>
+
+                <!-- Spacer between content and image/timer -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp" />
+
+                <!-- Image and Timer -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="20dp">
+
+                    <!-- Plate Icon -->
+                    <ImageView
+                        android:id="@+id/imageRecipe"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="2dp"
+                        android:src="@drawable/plate_icon" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <!-- Timer Button  -->
+                    <ImageButton
+                        android:id="@+id/timerButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/timer_icon_active"
+                        android:contentDescription="@string/timer_button_description" />
+
+                    <!-- Timer Text -->
+                    <TextView
+                        android:id="@+id/timerText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:textSize="20sp"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Bar -->
     <LinearLayout
+        android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:background="#99D3D7ED"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="MissingConstraints">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <!-- Back Button -->
         <ImageButton
             android:id="@+id/backButtonRecipe"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="16dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/back_icon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_width="80sp"
+            android:layout_height="60sp"
+            android:background="@drawable/button_background"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_menu_revert"
+            android:text="@string/back"
+            android:layout_marginEnd="200dp"
+            android:textSize="18sp"
+            tools:ignore="VisualLintButtonSize,SpeakableTextPresentCheck" />
 
         <!-- Favorite -->
         <ImageView

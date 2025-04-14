@@ -180,6 +180,7 @@ public class AddActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("yes", (dialog1, which) -> {
                     Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                    intent.putExtra("user_id", getIntent().getIntExtra("user_id", -1));
                     startActivity(intent);
                     finish();
                 })
