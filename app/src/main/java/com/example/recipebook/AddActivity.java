@@ -332,7 +332,7 @@ public class AddActivity extends AppCompatActivity {
                     timerDuration = (hourOfDay * 60) + minute;
                     if (timerDuration > 0) {
                         String timeText = String.format("%02d:%02d", hourOfDay, minute);
-                        Toast.makeText(this, "Timer set to " + timeText + " and saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Timer set to " + timeText + " ", Toast.LENGTH_SHORT).show();
                     }
                 },
                 0, // שעה התחלתית

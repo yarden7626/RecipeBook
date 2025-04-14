@@ -36,7 +36,7 @@ public class RecipeActivity extends AppCompatActivity {
     private static final String TAG = "RecipeActivity"; // תגית ללוגים
 
     // הגדרת משתנים גלובליים
-    private TextView recipeTitle, cateRecipeValue, pTimeValue, ingrValue, direValue; // שדות טקסט למתכון
+    private TextView recipeTitle, cateRecipeValue, pTimeValue, ingrValue, direValue, timerText; // שדות טקסט למתכון
     private ImageView imageRecipe, isFavRecipe; // תמונות
     private ImageButton timerButton, backButtonRecipe; // כפתורים
     private AppDatabase database; // אובייקט גישה לבסיס הנתונים
@@ -74,6 +74,7 @@ public class RecipeActivity extends AppCompatActivity {
         imageRecipe = findViewById(R.id.imageRecipe);
         isFavRecipe = findViewById(R.id.isFavRecipe);
         timerButton = findViewById(R.id.timerButton);
+        timerText = findViewById(R.id.timerText);
         backButtonRecipe = findViewById(R.id.backButtonRecipe);
 
         // רישום BroadcastReceiver לבקשת הרשאות
@@ -91,10 +92,9 @@ public class RecipeActivity extends AppCompatActivity {
                 // עדכון הממשק עם נתוני המתכון
                 runOnUiThread(() -> {
                     updateUI();
-                    // בדיקה אם יש טיימר מוגדר
+                    // אתחול משתני הטיימר
                     if (currentRecipe.getTimerDuration() > 0) {
                         timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000;
-                        updateTimerUI();
                     }
                 });
             }
@@ -226,6 +226,19 @@ public class RecipeActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void updateTimerUI() {
+        int minutes = (int) (timeLeftInMillis / 1000) / 60;
+        int seconds = (int) (timeLeftInMillis / 1000) % 60;
+        String timeLeftText = String.format("%02d:%02d", minutes, seconds);
+        
+        if (isTimerRunning) {
+            timerText.setVisibility(View.VISIBLE);
+            timerText.setText(timeLeftText);
+        } else {
+            timerText.setVisibility(View.GONE);
+        }
+    }
+
     private void startTimer() {
         if (!isTimerRunning) {
             isTimerRunning = true;
@@ -238,6 +251,7 @@ public class RecipeActivity extends AppCompatActivity {
             startService(serviceIntent);
             
             timerButton.setImageResource(R.drawable.timer_icon_active);
+            updateTimerUI();
         }
     }
 
@@ -258,13 +272,6 @@ public class RecipeActivity extends AppCompatActivity {
         stopTimer();
         timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000;
         updateTimerUI();
-    }
-
-    private void updateTimerUI() {
-        int minutes = (int) (timeLeftInMillis / 1000) / 60;
-        int seconds = (int) (timeLeftInMillis / 1000) % 60;
-        String timeLeftText = String.format("%02d:%02d", minutes, seconds);
-        Toast.makeText(this, timeLeftText, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -297,7 +304,7 @@ public class RecipeActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             TimerService.TimerBinder binder = (TimerService.TimerBinder) service;
-            timeLeftInMillis = binder.getTimeLeft();
+            timeLeftInMillis = binder.getService().getTimeLeft();
             updateTimerUI();
         }
 
