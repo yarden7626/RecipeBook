@@ -68,6 +68,8 @@ public class TimerService extends Service {
             countDownTimer.cancel();
         }
         
+        startForeground(NOTIFICATION_ID, createNotification());
+        
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -91,7 +93,6 @@ public class TimerService extends Service {
         }.start();
         
         isRunning = true;
-        startForeground(NOTIFICATION_ID, createNotification());
     }
     
     private void updateNotification() {
@@ -113,6 +114,10 @@ public class TimerService extends Service {
                 .setSmallIcon(R.drawable.timer_icon_active)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setAutoCancel(false)
                 .build();
     }
     
@@ -121,8 +126,11 @@ public class TimerService extends Service {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Timer Service Channel",
-                    NotificationManager.IMPORTANCE_LOW
+                    NotificationManager.IMPORTANCE_HIGH
             );
+            serviceChannel.setDescription("Timer service channel for recipe timers");
+            serviceChannel.enableLights(true);
+            serviceChannel.enableVibration(true);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
         }

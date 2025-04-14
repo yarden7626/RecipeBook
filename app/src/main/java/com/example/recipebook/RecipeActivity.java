@@ -271,10 +271,15 @@ public class RecipeActivity extends AppCompatActivity {
         Intent serviceIntent = new Intent(this, TimerService.class);
         serviceIntent.putExtra("timeLeftInMillis", timeLeftInMillis);
         try {
-            startService(serviceIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            } else {
+                startService(serviceIntent);
+            }
             bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
             isTimerRunning = true;
             updateTimerUI();
+            timerButton.setImageResource(R.drawable.timer_icon_active);
         } catch (SecurityException e) {
             Toast.makeText(this, "Could not start timer service", Toast.LENGTH_SHORT).show();
         }
@@ -292,6 +297,7 @@ public class RecipeActivity extends AppCompatActivity {
         }
         isTimerRunning = false;
         updateTimerUI();
+        timerButton.setImageResource(R.drawable.timer_icon_active);
     }
 
     private void resetTimer() {
@@ -303,40 +309,71 @@ public class RecipeActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // לא מנתקים את החיבור ל-Service כדי שהטיימר ימשיך לרוץ ברקע
-        // רק מנתקים את ה-BroadcastReceiver
-        unregisterReceiver(permissionReceiver);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // רושמים מחדש את ה-BroadcastReceiver
-        registerReceiver(permissionReceiver, new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION"));
-        
-        // אם הטיימר רץ, מתחברים מחדש ל-Service
-        if (isTimerRunning) {
-            Intent serviceIntent = new Intent(this, TimerService.class);
-            try {
-                bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-            } catch (SecurityException e) {
-                Log.e(TAG, "Failed to bind to TimerService", e);
-            }
+        try {
+            unregisterReceiver(permissionReceiver);
+        } catch (IllegalArgumentException e) {
+            // BroadcastReceiver לא רשום, אפשר להתעלם מהשגיאה
+            Log.d(TAG, "BroadcastReceiver not registered");
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // מנתקים את החיבור ל-Service רק כשהאקטיביטי נהרס
-        if (serviceConnection != null && timerService != null) {
+        
+        // לא מנתקים את החיבור ל-Service כדי שהטיימר ימשיך לרוץ ברקע
+        if (isTimerRunning) {
             try {
                 unbindService(serviceConnection);
             } catch (IllegalArgumentException e) {
                 // Service כבר לא מחובר, אפשר להתעלם מהשגיאה
             }
         }
-        unregisterReceiver(permissionReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            registerReceiver(permissionReceiver, new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION"));
+        } catch (IllegalArgumentException e) {
+            // BroadcastReceiver כבר רשום, אפשר להתעלם מהשגיאה
+            Log.d(TAG, "BroadcastReceiver already registered");
+        }
+        
+        // אם הטיימר רץ, מתחברים מחדש ל-Service ומעדכנים את ה-UI
+        if (isTimerRunning) {
+            Intent serviceIntent = new Intent(this, TimerService.class);
+            try {
+                bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+                // מעדכנים את ה-UI מיד
+                updateTimerUI();
+                // מעדכנים את מצב הכפתור
+                timerButton.setImageResource(R.drawable.timer_icon_active);
+            } catch (SecurityException e) {
+                Log.e(TAG, "Failed to bind to TimerService", e);
+            }
+        } else {
+            // אם הטיימר לא רץ, מעדכנים את ה-UI בהתאם
+            timerButton.setImageResource(R.drawable.timer_icon_active);
+            timerText.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            unregisterReceiver(permissionReceiver);
+        } catch (IllegalArgumentException e) {
+            // BroadcastReceiver לא רשום, אפשר להתעלם מהשגיאה
+            Log.d(TAG, "BroadcastReceiver not registered");
+        }
+        
+        // מנתקים את החיבור ל-Service רק כשהאקטיביטי נהרס
+        if (serviceConnection != null && timerService != null) {
+            try {
+                unbindService(serviceConnection);
+            } catch (IllegalArgumentException e) {
+                // Service כבר לא מחובר, אפשר להתעלם מהשגיאה
+                Log.d(TAG, "Service already unbound");
+            }
+        }
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -348,12 +385,9 @@ public class RecipeActivity extends AppCompatActivity {
                 timerService.setCallback(new TimerService.TimerCallback() {
                     @Override
                     public void onTimerUpdate(long millisUntilFinished) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                timeLeftInMillis = millisUntilFinished;
-                                updateTimerUI();
-                            }
+                        runOnUiThread(() -> {
+                            timeLeftInMillis = millisUntilFinished;
+                            updateTimerUI();
                         });
                     }
                 });
