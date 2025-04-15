@@ -9,6 +9,10 @@
     <string name="back">Back</string>
     <string name="enter_directions">Enter Directions</string>
     <string name="timer_button_description">Timer button. Press to start or stop the timer. Long press to reset.</string>
+    <string name="show_all">Show All</string>
+    <string name="filter_by_favorites">Favorites</string>
+    <string name="filter_by_category">Filter by Category</string>
+    <string name="select_filter">Select Filter</string>
 
     <string-array name="recipe_categories">
         <item>Pasta</item>

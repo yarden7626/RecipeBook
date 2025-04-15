@@ -24,4 +24,7 @@ public interface FavoriteRecipeDao {
 
     @Query("DELETE FROM favorite_recipes WHERE userId = :userId AND recipeId = :recipeId")
     void deleteFavorite(int userId, int recipeId);
+
+    @Query("SELECT r.* FROM recipes r INNER JOIN favorite_recipes f ON r.recipeId = f.recipeId WHERE f.userId = :userId")
+    List<Recipe> getFavoriteRecipes(int userId);
 } 

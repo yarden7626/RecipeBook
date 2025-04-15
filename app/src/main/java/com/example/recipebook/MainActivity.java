@@ -14,8 +14,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.lifecycle.Observer;
 import java.util.ArrayList;
 import java.util.List;
+import android.app.AlertDialog;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     // הגדרת משתנים גלובליים
     private RecyclerView recyclerView; // תצוגת רשימת המתכונים
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView titleText; // כותרת המסך
     private int currentUserId;
     private DataManager dataManager;
+    private String currentFilter = "Show All"; // פילטר נוכחי
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +62,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         // הגדרת כפתור הוספת מתכון חדש
-        FloatingActionButton addButton = findViewById(R.id.addRecipeBtn);
-        addButton.setOnClickListener(v -> {
+        addRecipeBtn.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
             intent.putExtra("user_id", currentUserId);
             startActivityForResult(intent, 1);
@@ -73,19 +75,63 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // הגדרת מאזין לחיצה לכפתור הסינון
-        filterButton.setOnClickListener(v -> {
-            // TODO: להוסיף פונקציונליות סינון
-            Toast.makeText(this, "Filter functionality coming soon", Toast.LENGTH_SHORT).show();
-        });
+        filterButton.setOnClickListener(v -> showFilterDialog());
 
         // טעינת המתכונים והמועדפים
         loadRecipes();
     }
 
+    private void showFilterDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Show Only");
+
+        // יצירת רשימת אפשרויות לפילטור
+        String[] filterOptions = {
+            getString(R.string.show_all),
+            getString(R.string.filter_by_favorites),
+            getString(R.string.filter_by_category)
+        };
+
+        builder.setItems(filterOptions, (dialog, which) -> {
+            switch (which) {
+                case 0: // Show All
+                    currentFilter = getString(R.string.show_all);
+                    loadRecipes();
+                    break;
+                case 1: // Favorites
+                    currentFilter = getString(R.string.filter_by_favorites);
+                    loadFavoriteRecipes();
+                    break;
+                case 2: // Filter by Category
+                    showCategoryDialog();
+                    break;
+            }
+        });
+
+        builder.show();
+    }
+
+    private void showCategoryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.filter_by_category);
+
+        // קבלת הקטגוריות מהמשאבים
+        String[] categories = getResources().getStringArray(R.array.recipe_categories);
+
+        builder.setItems(categories, (dialog, which) -> {
+            currentFilter = categories[which];
+            loadRecipesByCategory(categories[which]);
+        });
+
+        builder.show();
+    }
+
     private void loadRecipes() {
         // טעינת המתכונים
         dataManager.getAllRecipes().observe(this, recipes -> {
-            adapter.setRecipes(recipes);
+            if (currentFilter.equals(getString(R.string.show_all))) {
+                adapter.setRecipes(recipes);
+            }
         });
 
         // טעינת המועדפים
@@ -103,6 +149,26 @@ public class MainActivity extends AppCompatActivity {
             }
             adapter.notifyDataSetChanged();
         });
+    }
+
+    private void loadFavoriteRecipes() {
+        new Thread(() -> {
+            List<Recipe> favoriteRecipes = database.favoriteRecipeDao().getFavoriteRecipes(currentUserId);
+            runOnUiThread(() -> {
+                adapter.setRecipes(favoriteRecipes);
+                adapter.notifyDataSetChanged();
+            });
+        }).start();
+    }
+
+    private void loadRecipesByCategory(String category) {
+        new Thread(() -> {
+            List<Recipe> categoryRecipes = database.recipeDao().getRecipesByCategory(category);
+            runOnUiThread(() -> {
+                adapter.setRecipes(categoryRecipes);
+                adapter.notifyDataSetChanged();
+            });
+        }).start();
     }
 
     private void onRecipeClick(Recipe recipe) {
