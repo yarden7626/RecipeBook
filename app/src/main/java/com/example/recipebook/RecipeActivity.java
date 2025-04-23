@@ -290,7 +290,7 @@ public class RecipeActivity extends AppCompatActivity {
             bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
             isTimerRunning = true;
             updateTimerUI();
-            timerButton.setImageResource(R.drawable.timer_icon_active);
+            timerButton.setImageResource(R.drawable.baseline_access_time_filled_24);
         } catch (SecurityException e) {
             Toast.makeText(this, "Could not start timer service", Toast.LENGTH_SHORT).show();
         }
