@@ -81,7 +81,18 @@ public class RecipeActivity extends AppCompatActivity {
         backButtonRecipe = findViewById(R.id.backButtonRecipe);
 
         // רישום BroadcastReceiver לבקשת הרשאות
-        registerReceiver(permissionReceiver, new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                    permissionReceiver,
+                    new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION"),
+                    Context.RECEIVER_NOT_EXPORTED
+            );
+        } else {
+            registerReceiver(
+                    permissionReceiver,
+                    new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION")
+            );
+        }
 
         // טעינת המתכון והסטטוס של המועדפים
         new Thread(() -> {
@@ -330,8 +341,18 @@ public class RecipeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         try {
-            registerReceiver(permissionReceiver, new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION"));
-        } catch (IllegalArgumentException e) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(permissionReceiver, new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION"),
+                        Context.RECEIVER_NOT_EXPORTED);
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    registerReceiver(permissionReceiver,
+                            new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION"),
+                            Context.RECEIVER_NOT_EXPORTED);
+                } else {
+                    registerReceiver(permissionReceiver, new IntentFilter("com.example.recipebook.REQUEST_NOTIFICATION_PERMISSION"));
+                }
+            }        } catch (IllegalArgumentException e) {
             // BroadcastReceiver כבר רשום, אפשר להתעלם מהשגיאה
             Log.d(TAG, "BroadcastReceiver already registered");
         }

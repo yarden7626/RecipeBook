@@ -36,7 +36,6 @@
             android:name=".RecipeActivity"
             android:exported="false" />
 
-
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -46,13 +45,12 @@
             </intent-filter>
         </activity>
 
-
-
         <service
             android:name=".TimerService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
+
 
     </application>
 
