@@ -142,8 +142,8 @@ public class RecipeActivity extends AppCompatActivity {
                     Button negativeButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE);
                     positiveButton.setTextColor(ContextCompat.getColor(RecipeActivity.this, android.R.color.black));
                     negativeButton.setTextColor(ContextCompat.getColor(RecipeActivity.this, android.R.color.black));
-
                 });
+
                 dialog.show();
             } else {
                 finish();
