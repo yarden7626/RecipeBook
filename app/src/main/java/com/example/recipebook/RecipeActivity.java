@@ -120,67 +120,41 @@ public class RecipeActivity extends AppCompatActivity {
             }
         }).start();
 
-        // הגדרת מאזיני לחיצה לכפתורים
-        backButtonRecipe.setOnClickListener(v -> showExitRecipeDialog());
 
 
-        private void showExitRecipeDialog() {
-            if (isTimerRunning) {
-                MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(RecipeActivity.this);
-                dialogBuilder.setMessage("Are you sure you want to exit?\nThe timer will stop")
-                        .setCancelable(false)
-                        .setPositiveButton("yes", (dialog1, which) -> {
-                            Intent intent = new Intent(RecipeActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        })
-                        .setNegativeButton("cancel", null);
+            backButtonRecipe.setOnClickListener(v -> showExitRecipeDialog());
 
-                androidx.appcompat.app.AlertDialog dialog = dialogBuilder.create();
-                dialog.setOnShowListener(dialogInterface -> {
-                    Button positiveButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE);
-                    Button negativeButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE);
-                    positiveButton.setTextColor(ContextCompat.getColor(RecipeActivity.this, android.R.color.black));
-                    negativeButton.setTextColor(ContextCompat.getColor(RecipeActivity.this, android.R.color.black));
-                });
+            isFavRecipe.setOnClickListener(v -> toggleFavorite());
 
-                dialog.show();
-            } else {
-                finish();
-            }
+            timerButton.setOnClickListener(v -> {
+                if (currentRecipe != null && currentRecipe.getTimerDuration() > 0) {
+                    if (isTimerRunning) {
+                        showStopTimerDialog();
+                    } else {
+                        if (!hasShownInitialDialog) {
+                            showInitialTimerDialog();
+                            hasShownInitialDialog = true;
+                        } else if (timeLeftInMillis > 0) {
+                            showResumeTimerDialog();
+                        } else {
+                            showInitialTimerDialog();
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, "No timer is set for this recipe", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            // הוספת כפתור לאתחול מחדש של הטיימר
+            timerButton.setOnLongClickListener(v -> {
+                if (currentRecipe != null && currentRecipe.getTimerDuration() > 0) {
+                    resetTimer();
+                    return true;
+                }
+                return false;
+            });
         }
 
-
-        isFavRecipe.setOnClickListener(v -> toggleFavorite());
-
-        timerButton.setOnClickListener(v -> {
-            if (currentRecipe != null && currentRecipe.getTimerDuration() > 0) {
-                if (isTimerRunning) {
-                    showStopTimerDialog();
-                } else {
-                    if (!hasShownInitialDialog) {
-                        showInitialTimerDialog();
-                        hasShownInitialDialog = true;
-                    } else if (timeLeftInMillis > 0) {
-                        showResumeTimerDialog();
-                    } else {
-                        showInitialTimerDialog();
-                    }
-                }
-            } else {
-                Toast.makeText(this, "No timer is set for this recipe", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // הוספת כפתור לאתחול מחדש של הטיימר
-        timerButton.setOnLongClickListener(v -> {
-            if (currentRecipe != null && currentRecipe.getTimerDuration() > 0) {
-                resetTimer();
-                return true;
-            }
-            return false;
-        });
-    }
 
     private final BroadcastReceiver permissionReceiver = new BroadcastReceiver() {
         @Override
@@ -288,8 +262,8 @@ public class RecipeActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", (dialog, which) -> resumeTimer())
                 .setNegativeButton("No", null);
 
-          AlertDialog dialog = builder.create();
-          dialog.setOnShowListener(dialogInterface -> {
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.black));
         });
@@ -317,65 +291,95 @@ public class RecipeActivity extends AppCompatActivity {
         updateTimerUI();
     }
 
-    private void stopTimer() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-            isTimerRunning = false;
+
+        private void stopTimer () {
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+                isTimerRunning = false;
+                saveTimerState();
+                updateTimerUI();
+            }
+        }
+
+        private void resumeTimer () {
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+            }
+            startTimer();
+        }
+
+        private void resetTimer () {
+            timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000;
             saveTimerState();
             updateTimerUI();
         }
-    }
 
-    private void resumeTimer() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
+        private void saveTimerState () {
+            SharedPreferences sharedPreferences = getSharedPreferences("TimerPreferences", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putLong("timeLeftInMillis", timeLeftInMillis);
+            editor.putBoolean("isTimerRunning", isTimerRunning);
+            editor.apply();
         }
-        startTimer();
-    }
 
-    private void resetTimer() {
-        timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000;
-        saveTimerState();
-        updateTimerUI();
-    }
-
-    private void saveTimerState() {
-        SharedPreferences sharedPreferences = getSharedPreferences("TimerPreferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong("timeLeftInMillis", timeLeftInMillis);
-        editor.putBoolean("isTimerRunning", isTimerRunning);
-        editor.apply();
-    }
-
-    private void loadTimerState() {
-        SharedPreferences sharedPreferences = getSharedPreferences("TimerPreferences", MODE_PRIVATE);
-        timeLeftInMillis = sharedPreferences.getLong("timeLeftInMillis", 0);
-        isTimerRunning = sharedPreferences.getBoolean("isTimerRunning", false);
-        updateTimerUI();
-    }
-
-    private void updateTimerUI() {
-        if (timeLeftInMillis > 0) {
-            int minutes = (int) (timeLeftInMillis / 1000) / 60;
-            int seconds = (int) (timeLeftInMillis / 1000) % 60;
-            String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-            timerText.setText(timeLeftFormatted);
-            timerText.setVisibility(View.VISIBLE);
-        } else {
-            timerText.setVisibility(View.GONE);
+        private void loadTimerState () {
+            SharedPreferences sharedPreferences = getSharedPreferences("TimerPreferences", MODE_PRIVATE);
+            timeLeftInMillis = sharedPreferences.getLong("timeLeftInMillis", 0);
+            isTimerRunning = sharedPreferences.getBoolean("isTimerRunning", false);
+            updateTimerUI();
         }
-    }
 
-    private void toggleFavorite() {
-        new Thread(() -> {
-            if (isFavorite) {
-                database.favoriteRecipeDao().deleteFavorite(currentUserId, currentRecipe.getRecipeId());
-                isFavorite = false;
+        private void updateTimerUI () {
+            if (timeLeftInMillis > 0) {
+                int minutes = (int) (timeLeftInMillis / 1000) / 60;
+                int seconds = (int) (timeLeftInMillis / 1000) % 60;
+                String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+                timerText.setText(timeLeftFormatted);
+                timerText.setVisibility(View.VISIBLE);
             } else {
-                database.favoriteRecipeDao().insert(new FavoriteRecipe(currentUserId, currentRecipe.getRecipeId()));
-                isFavorite = true;
+                timerText.setVisibility(View.GONE);
             }
-            runOnUiThread(this::updateFavoriteIcon);
-        }).start();
+        }
+
+
+    private void showExitRecipeDialog () {
+        if (isTimerRunning) {
+            MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(RecipeActivity.this);
+            dialogBuilder.setMessage("Are you sure you want to exit?\nThe timer will stop ")
+                    .setCancelable(false)
+                    .setPositiveButton("yes", (dialog1, which) -> {
+                        Intent intent = new Intent(RecipeActivity.this, MainActivity.class);
+                        intent.putExtra("user_id", getIntent().getIntExtra("user_id", -1));
+                        startActivity(intent);
+                        finish();
+                    })
+                    .setNegativeButton("cancel", null);
+
+            androidx.appcompat.app.AlertDialog dialog = dialogBuilder.create();
+            dialog.setOnShowListener(dialogInterface -> {
+                Button positiveButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE);
+                positiveButton.setTextColor(ContextCompat.getColor(RecipeActivity.this, android.R.color.black));
+                negativeButton.setTextColor(ContextCompat.getColor(RecipeActivity.this, android.R.color.black));
+            });
+
+            dialog.show();
+
+        } else {
+            finish();
+        }
     }
-}
+
+        private void toggleFavorite () {
+            new Thread(() -> {
+                if (isFavorite) {
+                    database.favoriteRecipeDao().deleteFavorite(currentUserId, currentRecipe.getRecipeId());
+                    isFavorite = false;
+                } else {
+                    database.favoriteRecipeDao().insert(new FavoriteRecipe(currentUserId, currentRecipe.getRecipeId()));
+                    isFavorite = true;
+                }
+                runOnUiThread(this::updateFavoriteIcon);
+            }).start();
+        }
+    }
