@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.os.CountDownTimer;
+
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import java.util.List;
@@ -31,6 +34,9 @@ import android.os.IBinder;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.Manifest;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.Locale;
 
 public class RecipeActivity extends AppCompatActivity {
@@ -48,7 +54,6 @@ public class RecipeActivity extends AppCompatActivity {
     private long timeLeftInMillis = 0;
     private int currentUserId;
     private boolean isFavorite;
-    private TimerService timerService;
     private boolean hasShownInitialDialog = false;
 
 
@@ -116,7 +121,35 @@ public class RecipeActivity extends AppCompatActivity {
         }).start();
 
         // הגדרת מאזיני לחיצה לכפתורים
-        backButtonRecipe.setOnClickListener(v -> finish());
+        backButtonRecipe.setOnClickListener(v -> showExitRecipeDialog());
+
+
+        private void showExitRecipeDialog() {
+            if (isTimerRunning) {
+                MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(RecipeActivity.this);
+                dialogBuilder.setMessage("Are you sure you want to exit?\nThe timer will stop")
+                        .setCancelable(false)
+                        .setPositiveButton("yes", (dialog1, which) -> {
+                            Intent intent = new Intent(RecipeActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        })
+                        .setNegativeButton("cancel", null);
+
+                androidx.appcompat.app.AlertDialog dialog = dialogBuilder.create();
+                dialog.setOnShowListener(dialogInterface -> {
+                    Button positiveButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE);
+                    Button negativeButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE);
+                    positiveButton.setTextColor(ContextCompat.getColor(RecipeActivity.this, android.R.color.black));
+                    negativeButton.setTextColor(ContextCompat.getColor(RecipeActivity.this, android.R.color.black));
+
+                });
+                dialog.show();
+            } else {
+                finish();
+            }
+        }
+
 
         isFavRecipe.setOnClickListener(v -> toggleFavorite());
 
@@ -238,8 +271,14 @@ public class RecipeActivity extends AppCompatActivity {
         builder.setTitle("Stop Timer")
                 .setMessage("Are you sure you want to stop the timer?")
                 .setPositiveButton("Yes", (dialog, which) -> stopTimer())
-                .setNegativeButton("No", null)
-                .show();
+                .setNegativeButton("No", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.black));
+        });
+        dialog.show();
     }
 
     private void showResumeTimerDialog() {
@@ -247,8 +286,14 @@ public class RecipeActivity extends AppCompatActivity {
         builder.setTitle("Resume Timer")
                 .setMessage("Would you like to resume the timer?")
                 .setPositiveButton("Yes", (dialog, which) -> resumeTimer())
-                .setNegativeButton("No", null)
-                .show();
+                .setNegativeButton("No", null);
+
+          AlertDialog dialog = builder.create();
+          dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.black));
+        });
+        dialog.show();
     }
 
     private void startTimer() {
