@@ -158,7 +158,7 @@ public class AddActivity extends AppCompatActivity {
         saveButton.setOnClickListener(v -> saveRecipe());
 
         // הגדרת מאזיני לחיצה לתמונה
-        View.OnClickListener imageSelectionListener = v -> showImageSourceDialog();
+        View.OnClickListener imageSelectionListener = v -> checkAndRequestPermission();
         addImage.setOnClickListener(imageSelectionListener);
         AddPhotoBtn.setOnClickListener(imageSelectionListener);
 
@@ -196,21 +196,6 @@ public class AddActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    // פונקציה להצגת דיאלוג בחירת מקור התמונה
-    private void showImageSourceDialog() {
-        String[] options = {" Choose from Gallery", "Take a Photo "};
-        new MaterialAlertDialogBuilder(this)
-                .setTitle("Select Image Source")
-                .setItems(options, (dialog, item) -> {
-                    if (item == 0) {
-                        checkAndRequestPermission();
-                    } else if (item == 1) {
-                        checkAndRequestCameraPermission();
-                    }
-                })
-                .show();
-    }
-
     // פונקציה לבדיקת הרשאות
     private void checkAndRequestPermission() {
         String permission;
@@ -227,15 +212,6 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-    // פונקציה לבדיקת הרשאות מצלמה
-    private void checkAndRequestCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CODE);
-        } else {
-            openCamera();
-        }
-    }
-
     // פונקציה לפתיחת בוחר התמונות
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -243,24 +219,6 @@ public class AddActivity extends AppCompatActivity {
         imagePickerLauncher.launch(intent);
     }
 
-    // פונקציה לפתיחת המצלמה
-    private void openCamera() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Toast.makeText(this, "Error creating image file", Toast.LENGTH_SHORT).show();
-            }
-
-            if (photoFile != null) {
-                Uri photoURI = Uri.fromFile(photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                cameraLauncher.launch(takePictureIntent);
-            }
-        }
-    }
 
     // פונקציה ליצירת קובץ תמונה
     private File createImageFile() throws IOException {
@@ -282,8 +240,6 @@ public class AddActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (permissions[0].equals(Manifest.permission.CAMERA)) {
-                    openCamera();
-                } else {
                     openImagePicker();
                 }
             } else {
