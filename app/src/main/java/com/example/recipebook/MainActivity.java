@@ -3,21 +3,18 @@ package com.example.recipebook;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.lifecycle.Observer;
-import java.util.ArrayList;
 import java.util.List;
 import android.app.AlertDialog;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
 
     // הגדרת משתנים גלובליים
     private RecyclerView recyclerView; // תצוגת רשימת המתכונים
@@ -27,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton backButtonList; // כפתור חזרה
     private FloatingActionButton filterButton; // כפתור סינון
     private TextView titleText; // כותרת המסך
-    private int currentUserId;
-    private DataManager dataManager;
+    private int currentUserId; // מזהה המשתמש הנוכחי
+    private DataManager dataManager; // אובייקט לניהול הנתונים
     private String currentFilter = "Show All"; // פילטר נוכחי
 
     @Override
@@ -81,29 +78,30 @@ public class MainActivity extends AppCompatActivity {
         loadRecipes();
     }
 
+    // הצגת דיאלוג המאפשר לבחור פילטר (הצגת כל המתכונים, מועדפים או לפי קטגוריה)
     private void showFilterDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Show Only");
 
         // יצירת רשימת אפשרויות לפילטור
         String[] filterOptions = {
-            getString(R.string.show_all),
-            getString(R.string.filter_by_favorites),
-            getString(R.string.filter_by_category)
+                getString(R.string.show_all),
+                getString(R.string.filter_by_favorites),
+                getString(R.string.filter_by_category)
         };
 
         builder.setItems(filterOptions, (dialog, which) -> {
             switch (which) {
                 case 0: // Show All
                     currentFilter = getString(R.string.show_all);
-                    loadRecipes();
+                    loadRecipes(); // טעינת כל המתכונים
                     break;
                 case 1: // Favorites
                     currentFilter = getString(R.string.filter_by_favorites);
-                    loadFavoriteRecipes();
+                    loadFavoriteRecipes(); // טעינת המתכונים המועדפים
                     break;
                 case 2: // Filter by Category
-                    showCategoryDialog();
+                    showCategoryDialog(); // הצגת דיאלוג לבחור קטגוריה
                     break;
             }
         });
@@ -111,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    // הצגת דיאלוג לבחירת קטגוריית המתכונים
     private void showCategoryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.filter_by_category);
@@ -119,18 +118,19 @@ public class MainActivity extends AppCompatActivity {
         String[] categories = getResources().getStringArray(R.array.recipe_categories);
 
         builder.setItems(categories, (dialog, which) -> {
-            currentFilter = categories[which];
-            loadRecipesByCategory(categories[which]);
+            currentFilter = categories[which]; // עדכון הפילטר לפי הקטגוריה שנבחרה
+            loadRecipesByCategory(categories[which]); // טעינת המתכונים לפי קטגוריה
         });
 
         builder.show();
     }
 
+    // טעינת כל המתכונים
+    @SuppressLint("NotifyDataSetChanged")
     private void loadRecipes() {
-        // טעינת המתכונים
         dataManager.getAllRecipes().observe(this, recipes -> {
             if (currentFilter.equals(getString(R.string.show_all))) {
-                adapter.setRecipes(recipes);
+                adapter.setRecipes(recipes); // הצגת כל המתכונים ברשימה
             }
         });
 
@@ -151,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // טעינת המתכונים המועדפים של המשתמש
+    @SuppressLint("NotifyDataSetChanged")
     private void loadFavoriteRecipes() {
         new Thread(() -> {
             List<Recipe> favoriteRecipes = database.favoriteRecipeDao().getFavoriteRecipes(currentUserId);
@@ -161,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    // טעינת מתכונים לפי קטגוריה
     private void loadRecipesByCategory(String category) {
         new Thread(() -> {
             List<Recipe> categoryRecipes = database.recipeDao().getRecipesByCategory(category);
@@ -171,21 +174,25 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    // טיפול בלחיצה על מתכון מתוך הרשימה
     private void onRecipeClick(Recipe recipe) {
         Intent intent = new Intent(this, RecipeActivity.class);
-        intent.putExtra("recipe_id", recipe.getRecipeId());
-        intent.putExtra("user_id", currentUserId);
-        startActivity(intent);
+        intent.putExtra("recipe_id", recipe.getRecipeId()); // שליחה של מזהה המתכון
+        intent.putExtra("user_id", currentUserId); // שליחה של מזהה המשתמש
+        startActivity(intent); // מעבר למסך המתכון
     }
 
+    // פונקציה שמקבלת את התוצאה ממסך אחר (למשל, הוספת מתכון) ומטפלת בה
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // אם התוצאה היא עבור בקשה להוספת מתכון (requestCode == 1) והתוצאה היא הצלחה (RESULT_OK)
         if (requestCode == 1 && resultCode == RESULT_OK) {
+            // הצגת הודעת הצלחה על כך שהמתכון נוסף בהצלחה
             Toast.makeText(this, "Recipe added successfully", Toast.LENGTH_SHORT).show();
         }
     }
-
     @Override
     protected void onResume() {
         super.onResume();

@@ -3,7 +3,6 @@ package com.example.recipebook;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -38,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isValidEmail(String email) {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches(); // בדיקה אם האימייל תקין
     }
 
     // פונקציה לטיפול בהתחברות משתמש
@@ -49,12 +48,12 @@ public class LoginActivity extends AppCompatActivity {
 
         // בדיקת תקינות הקלט
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show(); // הודעת שגיאה אם יש שדות ריקים
             return;
         }
 
         if (!isValidEmail(email)) {
-            Toast.makeText(LoginActivity.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show(); // הודעת שגיאה אם האימייל לא תקין
             return;
         }
 
@@ -81,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
                 runOnUiThread(() ->
-                    Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                        Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show() // הודעת שגיאה במקרה של בעיית תקשורת
                 );
             }
         }).start();
@@ -95,12 +94,12 @@ public class LoginActivity extends AppCompatActivity {
 
         // בדיקת תקינות הקלט
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show(); // הודעת שגיאה אם יש שדות ריקים
             return;
         }
 
         if (!isValidEmail(email)) {
-            Toast.makeText(LoginActivity.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show(); // הודעת שגיאה אם האימייל לא תקין
             return;
         }
 
@@ -134,13 +133,13 @@ public class LoginActivity extends AppCompatActivity {
                     });
                 } else {
                     runOnUiThread(() ->
-                        Toast.makeText(LoginActivity.this, "Registration failed", Toast.LENGTH_LONG).show()
+                            Toast.makeText(LoginActivity.this, "Registration failed", Toast.LENGTH_LONG).show()
                     );
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 runOnUiThread(() ->
-                    Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                        Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show() // הודעת שגיאה במקרה של בעיית תקשורת
                 );
             }
         }).start();

@@ -6,11 +6,11 @@ import androidx.room.Ignore;
 import androidx.room.TypeConverters;
 import java.util.List;
 
-@Entity(tableName = "recipes")
-@TypeConverters({Converters.class})
+@Entity(tableName = "recipes") // מציין שזו ישות שקשורה לטבלת המתכונים בבסיס הנתונים
+@TypeConverters({Converters.class}) // מציין שנעשה שימוש בממירי נתונים (Converters) אם יש צורך להמיר סוגים שונים כמו List
 public class Recipe {
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = true) // מגדיר את ה-recipeId כמפתח ראשי שמאופס באופן אוטומטי
     private int recipeId; // המספר זיהוי של המתכון
     private String recipeName; // שם המתכון
     private String category; // קטגוריה של המתכון
@@ -22,99 +22,101 @@ public class Recipe {
     private int timerDuration; // זמן הטיימר בדקות
 
     // פעולה בונה
-    @Ignore
+    @Ignore // מציין שלפונקציה זו אין צורך להיכלל בבסיס הנתונים של Room
     public Recipe(String recipeName, String category, String prepTime, String directions, String imageUri, boolean isFavorite, List<String> ingredients, int timerDuration) {
-        this.recipeName = recipeName;
-        this.category = category;
-        this.prepTime = prepTime;
-        this.directions = directions;
-        this.imageUri = (imageUri == null || imageUri.isEmpty()) ? "android.resource://com.example.recipebook/drawable/plate_icon" : imageUri;
-        this.isFavorite = isFavorite;
-        this.ingredients = ingredients;
-        this.timerDuration = timerDuration;
+        this.recipeName = recipeName; // אתחול שם המתכון
+        this.category = category; // אתחול קטגוריית המתכון
+        this.prepTime = prepTime; // אתחול זמן ההכנה
+        this.directions = directions; // אתחול הוראות ההכנה
+        this.imageUri = (imageUri == null || imageUri.isEmpty()) ? "android.resource://com.example.recipebook/drawable/plate_icon" : imageUri; // אם אין URI לתמונה, משתמשים בתמונה ברירת מחדל
+        this.isFavorite = isFavorite; // אתחול מצב המועדפים
+        this.ingredients = ingredients; // אתחול רכיבי המתכון
+        this.timerDuration = timerDuration; // אתחול זמן הטיימר
     }
 
     // פעולה בונה ריקה - זו שתהיה בשימוש על ידי Room
     public Recipe() {
-        this.recipeName = "";
-        this.category = "";
-        this.prepTime = "";
-        this.directions = "";
-        this.imageUri = "android.resource://com.example.recipebook/drawable/plate_icon";
-        this.isFavorite = false;
-        this.ingredients = null;
-        this.timerDuration = 0;
+        this.recipeName = ""; // אתחול שם המתכון לערך ברירת מחדל
+        this.category = ""; // אתחול קטגוריית המתכון לערך ברירת מחדל
+        this.prepTime = ""; // אתחול זמן ההכנה לערך ברירת מחדל
+        this.directions = ""; // אתחול הוראות ההכנה לערך ברירת מחדל
+        this.imageUri = "android.resource://com.example.recipebook/drawable/plate_icon"; // תמונה ברירת מחדל
+        this.isFavorite = false; // אתחול מצב המועדפים לערך ברירת מחדל
+        this.ingredients = null; // אתחול רכיבי המתכון לערך ברירת מחדל
+        this.timerDuration = 0; // אתחול זמן הטיימר לערך ברירת מחדל
     }
 
+    // גטרים וסטטרים לכל שדה ב-Class
+
     public int getRecipeId() {
-        return recipeId;
+        return recipeId; // מחזיר את ה-ID של המתכון
     }
 
     public void setRecipeId(int recipeId) {
-        this.recipeId = recipeId;
+        this.recipeId = recipeId; // מגדיר את ה-ID של המתכון
     }
 
     public String getRecipeName() {
-        return recipeName;
+        return recipeName; // מחזיר את שם המתכון
     }
 
     public void setRecipeName(String recipeName) {
-        this.recipeName = recipeName;
+        this.recipeName = recipeName; // מגדיר את שם המתכון
     }
 
     public String getCategory() {
-        return category;
+        return category; // מחזיר את קטגוריית המתכון
     }
 
     public void setCategory(String category) {
-        this.category = category;
+        this.category = category; // מגדיר את קטגוריית המתכון
     }
 
     public String getPrepTime() {
-        return prepTime;
+        return prepTime; // מחזיר את זמן ההכנה של המתכון
     }
 
     public void setPrepTime(String prepTime) {
-        this.prepTime = prepTime;
+        this.prepTime = prepTime; // מגדיר את זמן ההכנה של המתכון
     }
 
     public String getDirections() {
-        return directions;
+        return directions; // מחזיר את הוראות ההכנה
     }
 
     public void setDirections(String directions) {
-        this.directions = directions;
+        this.directions = directions; // מגדיר את הוראות ההכנה
     }
 
     public String getImageUri() {
-        return imageUri;
+        return imageUri; // מחזיר את ה-URI של התמונה של המתכון
     }
 
     public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
+        this.imageUri = imageUri; // מגדיר את ה-URI של התמונה של המתכון
     }
 
     public boolean isFavorite() {
-        return isFavorite;
+        return isFavorite; // מחזיר אם המתכון במועדפים או לא
     }
 
     public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
+        isFavorite = favorite; // מגדיר אם המתכון במועדפים
     }
 
     public List<String> getIngredients() {
-        return ingredients;
+        return ingredients; // מחזיר את רשימת הרכיבים של המתכון
     }
 
     public void setIngredients(List<String> ingredients) {
-        this.ingredients = ingredients;
+        this.ingredients = ingredients; // מגדיר את רשימת הרכיבים של המתכון
     }
 
     public int getTimerDuration() {
-        return timerDuration;
+        return timerDuration; // מחזיר את זמן הטיימר של המתכון
     }
 
     public void setTimerDuration(int timerDuration) {
-        this.timerDuration = timerDuration;
+        this.timerDuration = timerDuration; // מגדיר את זמן הטיימר של המתכון
     }
 }
