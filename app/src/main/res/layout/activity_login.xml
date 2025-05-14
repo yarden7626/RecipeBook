@@ -4,13 +4,13 @@
     android:background="#6772B1"
     android:padding="0dp">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- טקסט כותרת שמברכת את המשתמש על כניסתו לאפליקציה -->
         <TextView
             android:id="@+id/welcomeText"
             android:layout_width="wrap_content"
@@ -27,6 +27,7 @@
             android:textSize="50sp"
             android:textStyle="bold" />
 
+        <!-- שדה קלט לאימייל -->
         <EditText
             android:id="@+id/emailEditText"
             android:layout_width="match_parent"
@@ -39,6 +40,7 @@
             android:minHeight="48dp"
             android:textColorHint="#E6FFFFFF" />
 
+        <!-- שדה קלט לסיסמה -->
         <EditText
             android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
@@ -51,6 +53,7 @@
             android:minHeight="48dp"
             android:textColorHint="#E6FFFFFF" />
 
+        <!-- כפתור התחברות -->
         <Button
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
@@ -61,6 +64,7 @@
             android:textColor="#000000"
             android:textSize="20sp" />
 
+        <!-- כפתור הרשמה -->
         <Button
             android:id="@+id/signUpButton"
             android:layout_width="match_parent"
@@ -71,40 +75,41 @@
             android:textColor="#000000"
             android:textSize="20sp" />
 
-
-
     </LinearLayout>
 
+    <!-- שורת תמונות בתחתית המסך (איקוני בישול ואפייה) -->
     <LinearLayout
         android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentEnd="true"
-    android:layout_alignParentBottom="true"
-    android:background="#99D3D7ED"
-    android:gravity="center"
-    android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:background="#99D3D7ED"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/cook1"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/cook1" />
+        <!-- תמונת אייקון 1 -->
+        <ImageView
+            android:id="@+id/cook1"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/cook1" />
 
-    <ImageView
-        android:id="@+id/cook2"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/cook2" />
+        <!-- תמונת אייקון 2 -->
+        <ImageView
+            android:id="@+id/cook2"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/cook2" />
 
-    <ImageView
-        android:id="@+id/cook3"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:src="@drawable/cook3" />
-</LinearLayout>
-
+        <!-- תמונת אייקון 3 -->
+        <ImageView
+            android:id="@+id/cook3"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:src="@drawable/cook3" />
+    </LinearLayout>
 
 </RelativeLayout>

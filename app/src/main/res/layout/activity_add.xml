@@ -6,8 +6,7 @@
     android:background="@color/backgroundColor"
     tools:context="AddActivity">
 
-
-
+    <!-- כותרת ראשית של המסך -->
     <TextView
         android:id="@+id/AddTitle"
         android:layout_width="wrap_content"
@@ -26,7 +25,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <!-- טופס למילוי פרטי המתכון -->
     <LinearLayout
         android:id="@+id/formContainer"
@@ -38,6 +36,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/AddTitle">
 
+        <!-- שדה להזנת שם המתכון -->
         <EditText
             android:id="@+id/editRecipeName"
             android:layout_width="match_parent"
@@ -46,6 +45,7 @@
             android:minHeight="48dp"
             tools:ignore="VisualLintTextFieldSize" />
 
+        <!-- שדה להזנת זמן הכנה -->
         <EditText
             android:id="@+id/editPreparationTime"
             android:layout_width="match_parent"
@@ -55,6 +55,7 @@
             android:minHeight="48dp"
             tools:ignore="VisualLintTextFieldSize" />
 
+        <!-- שדה להזנת מצרכים -->
         <EditText
             android:id="@+id/editIngredients"
             android:layout_width="match_parent"
@@ -63,6 +64,7 @@
             android:hint="Enter Ingredients"
             tools:ignore="VisualLintTextFieldSize" />
 
+        <!-- שדה להזנת הוראות הכנה -->
         <EditText
             android:id="@+id/editDirections"
             android:layout_width="match_parent"
@@ -72,7 +74,7 @@
             tools:ignore="ContentDescription,VisualLintTextFieldSize" />
     </LinearLayout>
 
-    <!-- כפתור העלאת תמונה -->
+    <!-- אייקון של צלחת - כפתור העלאת תמונה -->
     <ImageView
         android:id="@+id/addImage"
         android:layout_width="60dp"
@@ -84,7 +86,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/timerButton" />
 
-    <!-- כפתור העלאת תמונה -->
+    <!-- כפתור לבחירת תמונה להעלאה -->
     <Button
         android:id="@+id/AddPhotoBtn"
         android:layout_width="162dp"
@@ -97,7 +99,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/AddTimer" />
 
-    <!-- כפתור בחירת קטגוריה -->
+    <!-- כפתור לפתיחת תפריט בחירת קטגוריה -->
     <Button
         android:id="@+id/categoryButton"
         android:layout_width="wrap_content"
@@ -110,7 +112,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/formContainer" />
 
-    <!-- Spinner להצגת קטגוריות -->
+    <!-- Spinner להצגת הקטגוריות שנבחרו -->
     <Spinner
         android:id="@+id/categorySpinner"
         android:layout_width="0dp"
@@ -122,8 +124,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/formContainer" />
 
-    <!-- כפתור הוספת טיימר -->
-
+    <!-- כפתור לבחירת זמן (טיימר) -->
     <Button
         android:id="@+id/AddTimer"
         android:layout_width="162dp"
@@ -135,7 +136,8 @@
         android:textSize="17sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/categoryButton" />
-    <!-- כפתור טיימר -->
+
+    <!-- כפתור עם אייקון להפעלת טיימר -->
     <ImageButton
         android:id="@+id/timerButton"
         android:layout_width="60dp"
@@ -149,7 +151,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/categorySpinner" />
 
-
+    <!-- שורת כפתורים בתחתית המסך -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -162,8 +164,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="MissingConstraints">
 
-        <!-- כפתור חזרה -->
-
+        <!-- כפתור חזרה למסך הקודם -->
         <ImageButton
             android:id="@+id/backButtonAdd"
             android:layout_width="80sp"
@@ -177,7 +178,7 @@
             app:layout_constraintVertical_bias="0.945"
             tools:ignore="VisualLintButtonSize,SpeakableTextPresentCheck" />
 
-        <!-- כפתור שמירה -->
+        <!-- כפתור שמירת המתכון -->
         <Button
             android:id="@+id/saveButton"
             android:layout_width="139dp"
@@ -187,7 +188,6 @@
             android:text="Save"
             android:textSize="18sp"
             tools:ignore="VisualLintButtonSize" />
-
 
     </LinearLayout>
 

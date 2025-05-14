@@ -8,6 +8,7 @@
     android:background="@color/backgroundColor"
     tools:context=".MainActivity">
 
+    <!-- כותרת ראשית של המסך -->
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -26,6 +27,7 @@
         android:textSize="45sp"
         android:textStyle="bold" />
 
+    <!-- כפתור חזרה (למטה בצד ימין) -->
     <ImageButton
         android:id="@+id/backButtonList"
         android:layout_width="80sp"
@@ -42,6 +44,7 @@
         tools:ignore="MissingConstraints,SpeakableTextPresentCheck,VisualLintButtonSize"
         android:contentDescription="TODO" />
 
+    <!-- כפתור סינון (filter) שממוקם ליד הכותרת -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/filterButton"
         android:layout_width="wrap_content"
@@ -56,6 +59,7 @@
         app:layout_constraintTop_toBottomOf="@id/title"
         app:maxImageSize="50dp" />
 
+    <!-- רשימת המתכונים שמוצגת בעזרת RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_recipes"
         android:layout_width="0dp"
@@ -68,6 +72,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/addRecipeBtn" />
 
+    <!-- כפתור להוספת מתכון חדש (FAB - FloatingActionButton) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addRecipeBtn"
         android:layout_width="wrap_content"
@@ -80,7 +85,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="40dp" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

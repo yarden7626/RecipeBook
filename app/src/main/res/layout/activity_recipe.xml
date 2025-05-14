@@ -1,3 +1,4 @@
+<!-- Layout ראשי מסוג ConstraintLayout -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,18 +7,20 @@
     android:background="@color/backgroundColor"
     tools:context="AddActivity">
 
+    <!-- ScrollView לגלילה של התוכן שבאמצע המסך -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottomBar">
 
+        <!-- LinearLayout אנכי המכיל את כל התוכן בתוך הגלילה -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Title of the Recipe -->
+            <!-- כותרת שם המתכון במרכז למעלה -->
             <TextView
                 android:id="@+id/RecipeTitle"
                 android:layout_width="wrap_content"
@@ -34,7 +37,7 @@
                 android:textSize="45sp"
                 android:textStyle="bold" />
 
-            <!-- Form Container -->
+            <!-- קונטיינר עבור כל פרטי המתכון -->
             <LinearLayout
                 android:id="@+id/formContainer"
                 android:layout_width="match_parent"
@@ -42,7 +45,7 @@
                 android:layout_margin="16dp"
                 android:orientation="vertical">
 
-                <!-- Category -->
+                <!-- קטגוריה -->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -64,7 +67,7 @@
                         android:text="" />
                 </LinearLayout>
 
-                <!-- Preparation Time -->
+                <!-- זמן הכנה -->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -86,7 +89,7 @@
                         android:text="" />
                 </LinearLayout>
 
-                <!-- Ingredients -->
+                <!-- מצרכים -->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -108,7 +111,7 @@
                         android:text="" />
                 </LinearLayout>
 
-                <!-- Directions -->
+                <!-- הוראות הכנה -->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -130,12 +133,12 @@
                         android:text="" />
                 </LinearLayout>
 
-                <!-- Spacer between content and image/timer -->
+                <!-- רווח בין הסקשנים -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="80dp" />
 
-                <!-- Image and Timer -->
+                <!-- תמונה וכפתור טיימר -->
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -143,7 +146,7 @@
                     android:gravity="center_vertical"
                     android:layout_marginBottom="20dp">
 
-                    <!-- Plate Icon -->
+                    <!-- תמונת מתכון -->
                     <ImageView
                         android:id="@+id/imageRecipe"
                         android:layout_width="120dp"
@@ -152,12 +155,13 @@
                         android:layout_marginTop="2dp"
                         android:src="@drawable/plate_icon" />
 
+                    <!-- רווח גמיש בין התמונה לכפתור -->
                     <View
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
 
-                    <!-- Timer Button  -->
+                    <!-- כפתור טיימר -->
                     <ImageButton
                         android:id="@+id/timerButton"
                         android:layout_width="48dp"
@@ -167,7 +171,7 @@
                         android:src="@drawable/timer_icon_active"
                         android:contentDescription="@string/timer_button_description" />
 
-                    <!-- Timer Text -->
+                    <!-- טקסט של הטיימר (מוסתר בהתחלה ונראה רק אם הטיימר מופעל) -->
                     <TextView
                         android:id="@+id/timerText"
                         android:layout_width="wrap_content"
@@ -184,7 +188,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Bar -->
+    <!-- שורת תחתית עם כפתור חזור וסימון מועדפים -->
     <LinearLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
@@ -194,7 +198,7 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Back Button -->
+        <!-- כפתור חזור לעמוד הקודם -->
         <ImageButton
             android:id="@+id/backButtonRecipe"
             android:layout_width="80sp"
@@ -207,7 +211,7 @@
             android:textSize="18sp"
             tools:ignore="VisualLintButtonSize,SpeakableTextPresentCheck" />
 
-        <!-- Favorite -->
+        <!-- כוכב לסימון כמועדף -->
         <ImageView
             android:id="@+id/isFavRecipe"
             android:layout_width="60dp"
