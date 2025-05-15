@@ -17,8 +17,6 @@ public interface RecipeDao {
     @Update // מעדכן מתכון קיים
     void update(Recipe recipe);
 
-    @Delete // מוחק מתכון מהדאטה בייס
-    void delete(Recipe recipe);
 
     @Query("SELECT * FROM recipes") // מחזיר את כל המתכונים בטבלה
     List<Recipe> getAllRecipes();
