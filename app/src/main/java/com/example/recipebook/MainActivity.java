@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton addRecipeBtn; // כפתור הוספת מתכון
     private ImageButton backButtonList; // כפתור חזרה
     private FloatingActionButton filterButton; // כפתור סינון
-    private TextView titleText; // כותרת המסך
     private int currentUserId; // מזהה המשתמש הנוכחי
     private ActivityResultLauncher<Intent> addRecipeLauncher; // משגר לפתיחת AddActivity וקבלת תוצאה בפורמט החדש
     private DataManager dataManager; // אובייקט לניהול הנתונים
@@ -54,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         addRecipeBtn = findViewById(R.id.addRecipeBtn);
         backButtonList = findViewById(R.id.backButtonList);
         filterButton = findViewById(R.id.filterButton);
-        titleText = findViewById(R.id.title);
 
         // הגדרת ה-RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -179,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // טעינת מתכונים לפי קטגוריה
+    @SuppressLint("NotifyDataSetChanged")
     private void loadRecipesByCategory(String category) {
         new Thread(() -> {
             List<Recipe> categoryRecipes = database.recipeDao().getRecipesByCategory(category);

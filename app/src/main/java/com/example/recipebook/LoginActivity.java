@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 User newUser = new User(email, password);
-                long userId = database.userDao().insert(newUser);
+                database.userDao().insert(newUser);
 
                 // נחכה קצת כדי לוודא שהמשתמש נוצר
                 Thread.sleep(500);
