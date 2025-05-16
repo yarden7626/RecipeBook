@@ -1,5 +1,7 @@
 package com.example.recipebook;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton filterButton; // כפתור סינון
     private TextView titleText; // כותרת המסך
     private int currentUserId; // מזהה המשתמש הנוכחי
+    private ActivityResultLauncher<Intent> addRecipeLauncher; // משגר לפתיחת AddActivity וקבלת תוצאה בפורמט החדש
     private DataManager dataManager; // אובייקט לניהול הנתונים
     private String currentFilter = "Show All"; // פילטר נוכחי
 
@@ -58,11 +61,23 @@ public class MainActivity extends AppCompatActivity {
         adapter = new RecipeAdapter(this, this::onRecipeClick, currentUserId);
         recyclerView.setAdapter(adapter);
 
-        // הגדרת כפתור הוספת מתכון חדש
+        // אתחול ה-ActivityResultLauncher
+        addRecipeLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        // טיפול בתוצאה אם צריך
+                        loadRecipes();
+                    }
+                }
+        );
+
+        // הגדרת כפתור הוספת מתכון חדש עם השימוש ב-ActivityResultLauncher
         addRecipeBtn.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
             intent.putExtra("user_id", currentUserId);
-            startActivityForResult(intent, 1);
+            addRecipeLauncher.launch(intent);
         });
 
         backButtonList.setOnClickListener(v -> {
