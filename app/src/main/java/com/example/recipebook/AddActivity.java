@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -59,9 +60,7 @@ public class AddActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100; // קוד בקשת הרשאות
     private static final String PREFS_NAME = "RecipePrefs"; // שם קובץ ההעדפות
     private static final String CATEGORY_KEY = "selectedCategoryPosition"; // מפתח לשמירת מיקום הקטגוריה
-    private static final String CURRENT_PHOTO_PATH = "current_photo_path"; // מפתח לשמירת נתיב התמונה
     private int timerDuration = 0; // זמן הטיימר בדקות
-    private String currentPhotoPath; // נתיב לתמונה הנוכחית
 
     // הגדרת ActivityResultLauncher לבחירת תמונה מהגלריה
     private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
@@ -92,42 +91,6 @@ public class AddActivity extends AppCompatActivity {
                                 runOnUiThread(() -> Toast.makeText(this, "Error loading image preview. Try again", Toast.LENGTH_SHORT).show());
                             }
                         }).start();
-                    }
-                }
-            }
-    );
-
-    // הגדרת ActivityResultLauncher לצילום תמונה חדשה
-    private final ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    // טעינת התמונה מהקובץ השמור
-                    File photoFile = new File(currentPhotoPath);
-                    if (photoFile.exists()) {
-                        imageUri = Uri.fromFile(photoFile);
-                        try {
-                            Bitmap bitmap;
-                            // בדיקת גרסת אנדרואיד לשימוש בשיטה המתאימה לטעינת התמונה
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri));
-                            } else {
-                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                            }
-
-                            // עדכון התמונה ב-ImageView בתהליך ה-UI הראשי
-                            runOnUiThread(() -> {
-                                addImage.setImageBitmap(bitmap);
-                                addImage.setVisibility(View.VISIBLE);
-                                Log.d(TAG, "Successfully loaded camera image");
-                            });
-                        } catch (Exception e) {
-                            Log.e(TAG, "Error loading camera image", e);
-                            runOnUiThread(() -> {
-                                Toast.makeText(this, "Error loading camera image", Toast.LENGTH_SHORT).show();
-
-                            });
-                        }
                     }
                 }
             }
@@ -237,24 +200,6 @@ public class AddActivity extends AppCompatActivity {
     }
 
 
-      //  פונקציה ליצירת קובץ תמונה זמני עבור צילום מהמצלמה
-    //   @return קובץ התמונה שנוצר
-     // @throws IOException במקרה של שגיאה ביצירת הקובץ
-
-    private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,
-                ".jpg",
-                storageDir
-        );
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-
      // פונקציה המופעלת בעת קבלת תוצאות בקשת ההרשאות
      // בודקת אם ההרשאות ניתנו ופועלת בהתאם
 
@@ -272,10 +217,9 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * פונקציה להגדרת תפריט הקטגוריות (Spinner)
-     * טוענת את רשימת הקטגוריות מהמשאבים ומגדירה את ההתנהגות בעת בחירה
-     */
+    // פונקציה להגדרת תפריט הקטגוריות
+     // טוענת את רשימת הקטגוריות מהמשאבים ומגדירה את ההתנהגות בעת בחירה
+
     private void setupCategorySpinner() {
         // קבלת רשימת הקטגוריות מקובץ המשאבים
         String[] categories = getResources().getStringArray(R.array.recipe_categories);
@@ -318,7 +262,7 @@ public class AddActivity extends AppCompatActivity {
                     // המרת השעות לדקות וחישוב הזמן הכולל בדקות
                     timerDuration = (hourOfDay * 60) + minute;
                     if (timerDuration > 0) {
-                        String timeText = String.format("%02d:%02d", hourOfDay, minute);
+                        @SuppressLint("DefaultLocale") String timeText = String.format("%02d:%02d", hourOfDay, minute);
                         Toast.makeText(this, "Timer set to " + timeText + " ", Toast.LENGTH_SHORT).show();
                     }
                 },
@@ -333,10 +277,10 @@ public class AddActivity extends AppCompatActivity {
             Button positiveButton = timePickerDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             Button negativeButton = timePickerDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
             if (positiveButton != null) {
-                positiveButton.setTextColor(getResources().getColor(android.R.color.black));
+                positiveButton.setTextColor(ContextCompat.getColor(this, android.R.color.black));
             }
             if (negativeButton != null) {
-                negativeButton.setTextColor(getResources().getColor(android.R.color.black));
+                negativeButton.setTextColor(ContextCompat.getColor(this, android.R.color.black));
             }
         });
 
