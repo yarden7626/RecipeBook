@@ -1,6 +1,8 @@
 package com.example.recipebook;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -50,6 +52,7 @@ public class RecipeActivity extends AppCompatActivity {
     private boolean isFavorite; // האם המתכון מסומן כמועדף
     private boolean hasShownInitialDialog = false; // האם הודעת התחלת טיימר כבר הוצגה
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +108,7 @@ public class RecipeActivity extends AppCompatActivity {
                     updateUI(); // עדכון הממשק עם נתוני המתכון
                     // אתחול הטיימר אם מוגדר
                     if (currentRecipe.getTimerDuration() > 0) {
-                        timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000;
+                        timeLeftInMillis = (long) currentRecipe.getTimerDuration() * 60 * 1000;
                     }
                 });
             }
@@ -225,8 +228,10 @@ public class RecipeActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialogInterface -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(this, R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    .setTextColor(ContextCompat.getColor(this, R.color.black));
         });
         dialog.show();
     }
@@ -241,8 +246,10 @@ public class RecipeActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialogInterface -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(this, R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    .setTextColor(ContextCompat.getColor(this, R.color.black));
         });
         dialog.show();
     }
@@ -257,8 +264,10 @@ public class RecipeActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialogInterface -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.black));
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(this, R.color.black));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    .setTextColor(ContextCompat.getColor(this, R.color.black));
         });
         dialog.show();
     }
@@ -305,7 +314,7 @@ public class RecipeActivity extends AppCompatActivity {
 
     // איפוס טיימר
     private void resetTimer() {
-        timeLeftInMillis = currentRecipe.getTimerDuration() * 60 * 1000;
+        timeLeftInMillis = (long) currentRecipe.getTimerDuration() * 60 * 1000;
         saveTimerState();
         updateTimerUI();
     }
@@ -319,13 +328,6 @@ public class RecipeActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    // טעינת מצב הטיימר מהזיכרון
-    private void loadTimerState() {
-        SharedPreferences sharedPreferences = getSharedPreferences("TimerPreferences", MODE_PRIVATE);
-        timeLeftInMillis = sharedPreferences.getLong("timeLeftInMillis", 0);
-        isTimerRunning = sharedPreferences.getBoolean("isTimerRunning", false);
-        updateTimerUI();
-    }
 
     // עדכון טקסט הטיימר בממשק
     private void updateTimerUI() {

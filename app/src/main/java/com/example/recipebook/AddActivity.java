@@ -200,8 +200,8 @@ public class AddActivity extends AppCompatActivity {
         dialog.setOnShowListener(dialogInterface -> {
             Button positiveButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE);
             Button negativeButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE);
-            positiveButton.setTextColor(getResources().getColor(android.R.color.black));
-            negativeButton.setTextColor(getResources().getColor(android.R.color.black));
+            positiveButton.setTextColor(ContextCompat.getColor(AddActivity.this, android.R.color.black));
+            negativeButton.setTextColor(ContextCompat.getColor(AddActivity.this, android.R.color.black));
         });
         dialog.show();
     }
