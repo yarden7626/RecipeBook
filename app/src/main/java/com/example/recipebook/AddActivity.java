@@ -16,7 +16,6 @@ import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -29,21 +28,14 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.List;
-import android.app.TimePickerDialog;
 import java.util.Arrays;
+import android.app.TimePickerDialog;
 import android.app.AlertDialog;
 
-
-
- // מחלקה זו אחראית על מסך הוספת מתכון חדש
- // המשתמש יכול להזין שם מתכון, קטגוריה, זמן הכנה, רכיבים והוראות הכנה
- //  ניתן גם להוסיף תמונה ולהגדיר טיימר
+// מחלקה זו אחראית על מסך הוספת מתכון חדש
+// המשתמש יכול להזין שם מתכון, קטגוריה, זמן הכנה, רכיבים והוראות הכנה
+//  ניתן גם להוסיף תמונה ולהגדיר טיימר
 
 public class AddActivity extends AppCompatActivity {
 
@@ -96,9 +88,8 @@ public class AddActivity extends AppCompatActivity {
             }
     );
 
-     // פונקציה הנקראת בעת יצירת האקטיביטי
-     // מאתחלת את כל הרכיבים ומגדירה מאזינים
-
+    // פונקציה הנקראת בעת יצירת האקטיביטי
+    // מאתחלת את כל הרכיבים ומגדירה מאזינים
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,10 +134,8 @@ public class AddActivity extends AppCompatActivity {
         timerButton.setOnClickListener(v -> showTimerDialog());
     }
 
-
-     // פונקציה להצגת דיאלוג אישור יציאה מהמסך
-     // מציגה הודעת אזהרה שהנתונים לא יישמרו
-
+    // פונקציה להצגת דיאלוג אישור יציאה מהמסך
+    // מציגה הודעת אזהרה שהנתונים לא יישמרו
     private void showExitDialog() {
         MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(AddActivity.this);
         dialogBuilder.setMessage("Are you sure you want to exit?\nYour data will not be saved")
@@ -169,20 +158,16 @@ public class AddActivity extends AppCompatActivity {
         dialog.show();
     }
 
-
-    //  פונקציה לבדיקת הרשאות הדרושות לגישה לתמונות
-     // מבקשת הרשאות מהמשתמש אם הן עדיין לא ניתנו
-
+    // פונקציה לבדיקת הרשאות הדרושות לגישה לתמונות
+    // מבקשת הרשאות מהמשתמש אם הן עדיין לא ניתנו
     private void checkAndRequestPermission() {
-        String permission;
-        // בדיקת גרסת אנדרואיד לצורך בחירת ההרשאה המתאימה
+        String permission = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permission = Manifest.permission.READ_MEDIA_IMAGES;
+            permission = Manifest.permission.READ_MEDIA_IMAGES; //החלפת הרשאה לאנדרואיד 13
         } else {
             permission = Manifest.permission.READ_EXTERNAL_STORAGE;
         }
 
-        // בדיקה אם יש צורך לבקש הרשאה
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{permission}, PERMISSION_REQUEST_CODE);
         } else {
@@ -190,27 +175,22 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-
-     // פונקציה לפתיחת בוחר התמונות מהגלריה
-
+    // פונקציה לפתיחת בוחר התמונות מהגלריה
+    @SuppressLint("IntentReset")
     private void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
+        @SuppressLint("IntentReset") Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI); // Use EXTERNAL_CONTENT_URI - שימוש ב URI חיצוני
         intent.setType("image/*");
         imagePickerLauncher.launch(intent);
     }
 
-
-     // פונקציה המופעלת בעת קבלת תוצאות בקשת ההרשאות
-     // בודקת אם ההרשאות ניתנו ופועלת בהתאם
-
+    // פונקציה המופעלת בעת קבלת תוצאות בקשת ההרשאות
+    // בודקת אם ההרשאות ניתנו ופועלת בהתאם
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (permissions[0].equals(Manifest.permission.CAMERA)) {
-                    openImagePicker();
-                }
+                openImagePicker();
             } else {
                 Toast.makeText(this, "Permission denied. Cannot select image.", Toast.LENGTH_SHORT).show();
             }
@@ -218,8 +198,7 @@ public class AddActivity extends AppCompatActivity {
     }
 
     // פונקציה להגדרת תפריט הקטגוריות
-     // טוענת את רשימת הקטגוריות מהמשאבים ומגדירה את ההתנהגות בעת בחירה
-
+    // טוענת את רשימת הקטגוריות מקובץ המשאבים ומגדירה את ההתנהגות בעת בחירה
     private void setupCategorySpinner() {
         // קבלת רשימת הקטגוריות מקובץ המשאבים
         String[] categories = getResources().getStringArray(R.array.recipe_categories);
@@ -247,14 +226,13 @@ public class AddActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {}
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
         });
     }
 
-
-     // פונקציה להצגת דיאלוג הגדרת טיימר
-    //  מאפשרת למשתמש לבחור שעות ודקות
-
+    // פונקציה להצגת דיאלוג הגדרת טיימר
+    // מאפשרת למשתמש לבחור שעות ודקות
     private void showTimerDialog() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 this,
@@ -271,8 +249,7 @@ public class AddActivity extends AppCompatActivity {
                 true // פורמט 24 שעות
         );
         timePickerDialog.setTitle("Set Timer Duration");
-
-        // שינוי צבע הכפתורים לשחור
+        //For Black Button Color
         timePickerDialog.setOnShowListener(dialogInterface -> {
             Button positiveButton = timePickerDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             Button negativeButton = timePickerDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
@@ -287,9 +264,8 @@ public class AddActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-
-     // פונקציה לשמירת המתכון בבסיס הנתונים
-     // בודקת תקינות הקלט ויוצרת אובייקט מתכון חדש
+    // פונקציה לשמירת המתכון בבסיס הנתונים
+    // בודקת תקינות הקלט ויוצרת אובייקט מתכון חדש
     private void saveRecipe() {
         // קבלת ערכי השדות מהמשתמש
         String name = editRecipeName.getText().toString().trim();
@@ -331,3 +307,4 @@ public class AddActivity extends AppCompatActivity {
         }).start();
     }
 }
+
