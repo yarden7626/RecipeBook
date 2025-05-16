@@ -375,11 +375,11 @@ public class RecipeActivity extends AppCompatActivity {
         new Thread(() -> {
             if (isFavorite) {
                 // אם המתכון כבר מסומן כמועדף - הסרה מהטבלה של המועדפים במסד הנתונים
-                database.favoriteRecipeDao().deleteFavorite(currentUserId, currentRecipe.getRecipeId());
+                 database.favoriteRecipeDao().deleteFavorite(currentUserId, currentRecipe.getRecipeId());
                 isFavorite = false;
             } else {
                 // אם המתכון לא במועדפים - הוספה של רשומה חדשה עם מזהה המשתמש והמתכון
-                database.favoriteRecipeDao().insert(new FavoriteRecipe(currentUserId, currentRecipe.getRecipeId()));
+                 database.favoriteRecipeDao().insert(new FavoriteRecipe(currentUserId, currentRecipe.getRecipeId()));
                 isFavorite = true;
             }
 

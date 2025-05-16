@@ -63,13 +63,4 @@ public class DataManager {
         executorService.execute(() -> database.recipeDao().insert(recipe));  // הוספת המתכון על חוט נפרד
     }
 
-    // פונקציה להוספת מתכון למועדפים
-    public void insertFavorite(FavoriteRecipe favorite) {
-        executorService.execute(() -> database.favoriteRecipeDao().insert(favorite));  // הוספת המתכון למועדפים על חוט נפרד
-    }
-
-    // פונקציה למחיקת מתכון מהמועדפים לפי ID של המשתמש והמתכון
-    public void deleteFavorite(int userId, int recipeId) {
-        executorService.execute(() -> database.favoriteRecipeDao().deleteFavorite(userId, recipeId));  // מחיקת המתכון מהמועדפים
-    }
 }

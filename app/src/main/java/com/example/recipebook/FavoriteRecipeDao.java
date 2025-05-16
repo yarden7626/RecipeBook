@@ -13,7 +13,6 @@ public interface FavoriteRecipeDao {
     @Insert  // פעולה להוספת מתכון מועדף למסד הנתונים
     void insert(FavoriteRecipe favoriteRecipe);
 
-
     // פונקציה שמחזירה את כל המתכונים המועדפים של משתמש לפי מזהה המשתמש
     @Query("SELECT * FROM favorite_recipes WHERE userId = :userId")
     LiveData<List<FavoriteRecipe>> getFavoritesByUserId(int userId);
