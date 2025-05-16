@@ -2,7 +2,6 @@ package com.example.recipebook;
 
 import androidx.room.TypeConverter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 // מחלקה לביצוע המרות בין טיפוסי נתונים מורכבים לטיפוסים פשוטים שניתן לשמור בבסיס הנתונים
