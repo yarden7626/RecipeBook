@@ -294,7 +294,8 @@ public class AddActivity extends AppCompatActivity {
         // שמירת המתכון בבסיס הנתונים בתהליך נפרד
         new Thread(() -> {
             try {
-                database.recipeDao().insert(recipe);
+
+               database.recipeDao().insert(recipe);
                 runOnUiThread(() -> {
                     Toast.makeText(AddActivity.this, "Recipe saved successfully", Toast.LENGTH_SHORT).show();
                     finish(); // סגירת האקטיביטי לאחר השמירה

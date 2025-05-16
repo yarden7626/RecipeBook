@@ -63,12 +63,6 @@ public class DataManager {
         executorService.execute(() -> database.recipeDao().insert(recipe));  // הוספת המתכון על חוט נפרד
     }
 
-    // פונקציה לעדכון מתכון קיים במסד הנתונים
-    public void updateRecipe(Recipe recipe) {
-        executorService.execute(() -> database.recipeDao().update(recipe));  // עדכון המתכון על חוט נפרד
-    }
-
-
     // פונקציה להוספת מתכון למועדפים
     public void insertFavorite(FavoriteRecipe favorite) {
         executorService.execute(() -> database.favoriteRecipeDao().insert(favorite));  // הוספת המתכון למועדפים על חוט נפרד
